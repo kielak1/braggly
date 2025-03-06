@@ -35,8 +35,29 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'    
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.rest-assured:rest-assured:5.3.0'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2' // Używa Jackson do serializacji tokenów
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+   
+   
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
+
+
+
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+tasks.withType(Test).configureEach {
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+    }
+}
+
+test {
+    useJUnitPlatform() // Wymagane dla JUnit 5!
 }

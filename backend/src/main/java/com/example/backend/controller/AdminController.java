@@ -5,6 +5,8 @@ import com.example.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -16,7 +18,14 @@ public class AdminController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<String> createUser(@RequestBody Map<String, String> userData) {
+        String username = userData.get("username");
+        String password = userData.get("password");
+
+        if (username == null || password == null) {
+            return ResponseEntity.badRequest().body("Missing username or password.");
+        }
+
         userService.createUser(username, password, User.Role.USER);
         return ResponseEntity.ok("User created successfully.");
     }
