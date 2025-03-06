@@ -15,18 +15,18 @@ public class AdminController {
         this.userService = userService;
     }
 
-    // @PostMapping("/create-user")
-    // public ResponseEntity<String> createUser(@RequestParam String username, @RequestParam String password) {
-    //     userService.createUser(username, password, User.Role.USER);
-    //     return ResponseEntity.ok("User created successfully.");
-    // }
-
-
     @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        userService.createUser(user.getUsername(), user.getPassword(), User.Role.USER);
+    public ResponseEntity<String> createUser(@RequestParam String username, @RequestParam String password) {
+        userService.createUser(username, password, User.Role.USER);
         return ResponseEntity.ok("User created successfully.");
     }
+
+
+    // @PostMapping("/create-user")
+    // public ResponseEntity<String> createUser(@RequestBody User user) {
+    //     userService.createUser(user.getUsername(), user.getPassword(), User.Role.USER);
+    //     return ResponseEntity.ok("User created successfully.");
+    // }
     
 
 }
