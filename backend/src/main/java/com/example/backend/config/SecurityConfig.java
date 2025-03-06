@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.List;
 
@@ -39,11 +40,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .httpBasic();  // Tymczasowo Basic Auth
+                .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/api/admin/**"))) // ✅ Wyłączenie CSRF dla `/api/admin/**`
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // ✅ Wymaga roli ADMIN
+                        .anyRequest().authenticated())
+                .httpBasic(); // ✅ Poprawione użycie Basic Auth (bez lambdy)
+
         return http.build();
     }
 }
