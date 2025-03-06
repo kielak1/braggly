@@ -1,0 +1,45 @@
+#!/bin/bash
+
+
+
+# Ustawienia
+
+BASE_URL="http://localhost:9191"
+
+USERNAME="admin"
+
+PASSWORD="admin"
+
+
+
+# 1. Pobranie tokena
+
+TOKEN=$(curl -s -X POST "$BASE_URL/api/auth/login"  -H "Content-Type: application/json"  -d "{\"username\": \"$USERNAME\", \"password\": \"$PASSWORD\"}" | jq -r '.token')
+
+
+
+# Sprawdzenie czy token został pobrany
+
+if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
+
+    echo "❌ Błąd: Nie udało się pobrać tokena!"
+
+    exit 1
+
+fi
+
+
+
+echo "✅ Token pobrany: $TOKEN"
+
+
+
+# 2. Użycie tokena do wywołania /api/hello
+
+RESPONSE=$(curl -s -X GET "$BASE_URL/api/hello"    -H "Authorization: Bearer $TOKEN")
+
+
+
+echo "🔍 Odpowiedź z /api/hello: $RESPONSE"
+
+
