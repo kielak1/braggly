@@ -21,12 +21,13 @@ public class AdminController {
         return ResponseEntity.ok("User created successfully.");
     }
 
-
-    // @PostMapping("/create-user")
-    // public ResponseEntity<String> createUser(@RequestBody User user) {
-    //     userService.createUser(user.getUsername(), user.getPassword(), User.Role.USER);
-    //     return ResponseEntity.ok("User created successfully.");
-    // }
-    
-
+    @DeleteMapping("/delete-user")
+    public ResponseEntity<String> deleteUser(@RequestParam String username) {
+        boolean deleted = userService.deleteUser(username);
+        if (deleted) {
+            return ResponseEntity.ok("User deleted successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("User not found.");
+        }
+    }
 }
