@@ -12,7 +12,7 @@ import java.util.Map;
 public class WhoAmIController {
 
     @GetMapping("/whoami")
-    public Map<String, Object> sayHello(Authentication authentication) {
+    public Map<String, Object> whoAmI(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         String username = user.getUsername();
         String role = user.getRole().name();

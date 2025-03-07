@@ -4,7 +4,7 @@ import com.example.backend.model.User;
 import com.example.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
 import java.util.Map;
 
 @RestController
@@ -18,12 +18,19 @@ public class AdminController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<String> createUser(@RequestBody Map<String, String> userData) {
+    public ResponseEntity<String> createUser(@RequestBody Map<String, String> userData, Authentication authentication) {
         String username = userData.get("username");
         String password = userData.get("password");
 
         if (username == null || password == null) {
             return ResponseEntity.badRequest().body("Missing username or password.");
+        }
+
+        User user = (User) authentication.getPrincipal();
+        String role = user.getRole().name();
+
+        if (role != "ADMIN" ) {
+            return ResponseEntity.badRequest().body("Brak uprawnień.");
         }
 
         userService.createUser(username, password, User.Role.USER);
