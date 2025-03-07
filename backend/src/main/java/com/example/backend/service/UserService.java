@@ -5,7 +5,7 @@ import com.example.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,4 +45,10 @@ public class UserService {
             System.out.println("Admin user created with default password 'admin'");
         }
     }
+
+    public List<User> getAllUsers() {
+        // Implementation to retrieve all users
+        return List.of(); // Replace with actual implementation
+    }
+
 }
