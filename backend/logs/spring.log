@@ -1916,3 +1916,275 @@ Review the value of the property with the provided reason.
 2025-03-07T17:02:52.141Z DEBUG 3506126 --- [braggly] [http-nio-9191-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
 2025-03-07T17:02:52.142Z DEBUG 3506126 --- [braggly] [http-nio-9191-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Writing ["Hello, world!"]
 2025-03-07T17:02:52.143Z DEBUG 3506126 --- [braggly] [http-nio-9191-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T20:58:37.115Z  INFO 3506126 --- [braggly] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-07T20:58:37.270Z  INFO 3506126 --- [braggly] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-07T20:58:37.436Z  INFO 3506126 --- [braggly] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-07T20:58:37.552Z  INFO 3506126 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-03-07T20:58:37.609Z  INFO 3506126 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-03-07T20:58:54.432Z  INFO 3575427 --- [braggly] [main] com.example.backend.BackendApplication   : Starting BackendApplication using Java 17.0.13 with PID 3575427 (/opt/braggly/backend/build/classes/java/main started by rocky in /opt/braggly/backend)
+2025-03-07T20:58:54.435Z  INFO 3575427 --- [braggly] [main] com.example.backend.BackendApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-07T20:58:55.874Z  INFO 3575427 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-07T20:58:55.971Z  INFO 3575427 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 78 ms. Found 1 JPA repository interface.
+2025-03-07T20:58:57.062Z  INFO 3575427 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9191 (http)
+2025-03-07T20:58:57.079Z  INFO 3575427 --- [braggly] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-07T20:58:57.081Z  INFO 3575427 --- [braggly] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-03-07T20:58:57.207Z  INFO 3575427 --- [braggly] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-07T20:58:57.208Z  INFO 3575427 --- [braggly] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2700 ms
+2025-03-07T20:58:57.653Z  INFO 3575427 --- [braggly] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-07T20:58:57.741Z  INFO 3575427 --- [braggly] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-03-07T20:58:57.793Z  INFO 3575427 --- [braggly] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-03-07T20:58:58.273Z  INFO 3575427 --- [braggly] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-03-07T20:58:58.348Z  INFO 3575427 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-03-07T20:58:58.596Z  INFO 3575427 --- [braggly] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1eb6037d
+2025-03-07T20:58:58.599Z  INFO 3575427 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-03-07T20:58:58.760Z  INFO 3575427 --- [braggly] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 13.18
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-03-07T20:58:59.889Z  INFO 3575427 --- [braggly] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-03-07T20:59:00.014Z  INFO 3575427 --- [braggly] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-07T20:59:00.486Z DEBUG 3575427 --- [braggly] [main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2025-03-07T20:59:00.827Z DEBUG 3575427 --- [braggly] [main] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T20:59:00.974Z  WARN 3575427 --- [braggly] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-03-07T20:59:01.028Z  INFO 3575427 --- [braggly] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-03-07T20:59:01.267Z DEBUG 3575427 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 8 mappings in 'requestMappingHandlerMapping'
+2025-03-07T20:59:01.476Z DEBUG 3575427 --- [braggly] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-03-07T20:59:01.732Z  INFO 3575427 --- [braggly] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-03-07T20:59:01.863Z DEBUG 3575427 --- [braggly] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-03-07T20:59:02.114Z DEBUG 3575427 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-03-07T20:59:02.175Z DEBUG 3575427 --- [braggly] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-03-07T20:59:02.550Z  INFO 3575427 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9191 (http) with context path '/'
+2025-03-07T20:59:02.571Z  INFO 3575427 --- [braggly] [main] com.example.backend.BackendApplication   : Started BackendApplication in 8.794 seconds (process running for 9.352)
+2025-03-07T20:59:09.483Z  INFO 3575427 --- [braggly] [http-nio-9191-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-07T20:59:09.484Z  INFO 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-07T20:59:09.484Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-03-07T20:59:09.485Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-03-07T20:59:09.485Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-03-07T20:59:09.487Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@6be865c1
+2025-03-07T20:59:09.488Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@2ff2a096
+2025-03-07T20:59:09.488Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-03-07T20:59:09.488Z  INFO 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2025-03-07T20:59:09.515Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-07T20:59:09.530Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T20:59:09.536Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-07T20:59:09.542Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-07T20:59:09.544Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-07T20:59:09.697Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@356966ea]
+2025-03-07T20:59:09.711Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T20:59:09.914Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-07T20:59:09.915Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTM4MTE0OSwiZXhwIjoxNzQxMzg0NzQ5fQ.L (truncated)..."]
+2025-03-07T20:59:09.923Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T20:59:14.557Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/whoami
+2025-03-07T20:59:14.584Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T20:59:14.593Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/whoami
+2025-03-07T20:59:14.593Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/api/whoami", parameters={}
+2025-03-07T20:59:14.594Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.WhoAmIController#whoAmI(Authentication)
+2025-03-07T20:59:14.604Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-03-07T20:59:14.605Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Writing [{role=ADMIN, username=admin}]
+2025-03-07T20:59:14.613Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T21:00:15.494Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /api/admin/list-user
+2025-03-07T21:00:15.507Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:00:15.516Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /api/admin/list-user
+2025-03-07T21:00:15.517Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] o.s.web.servlet.DispatcherServlet        : GET "/api/admin/list-user", parameters={}
+2025-03-07T21:00:15.518Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#listUsers(Authentication)
+2025-03-07T21:00:15.525Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-03-07T21:00:15.526Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [[]]
+2025-03-07T21:00:15.529Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T21:01:07.304Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /api/admin/delete-user
+2025-03-07T21:01:07.316Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:01:07.326Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Secured POST /api/admin/delete-user
+2025-03-07T21:01:07.327Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/admin/delete-user", parameters={}
+2025-03-07T21:01:07.331Z  WARN 3575427 --- [braggly] [http-nio-9191-exec-4] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' is not supported]
+2025-03-07T21:01:07.331Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 405 METHOD_NOT_ALLOWED
+2025-03-07T21:01:07.342Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /error
+2025-03-07T21:01:07.344Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:01:07.348Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.s.w.a.Http403ForbiddenEntryPoint     : Pre-authenticated entry point called. Rejecting access
+2025-03-07T21:02:18.247Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user
+2025-03-07T21:02:18.262Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:02:18.276Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.security.web.FilterChainProxy        : Secured DELETE /api/admin/delete-user
+2025-03-07T21:02:18.277Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.web.servlet.DispatcherServlet        : DELETE "/api/admin/delete-user", parameters={}
+2025-03-07T21:02:18.278Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#deleteUser(String, Authentication)
+2025-03-07T21:02:18.287Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.web.method.HandlerMethod             : Could not resolve parameter [0] in public org.springframework.http.ResponseEntity<java.lang.String> com.example.backend.controller.AdminController.deleteUser(java.lang.String,org.springframework.security.core.Authentication): Required request parameter 'username' for method parameter type String is not present
+2025-03-07T21:02:18.294Z  WARN 3575427 --- [braggly] [http-nio-9191-exec-7] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.bind.MissingServletRequestParameterException: Required request parameter 'username' for method parameter type String is not present]
+2025-03-07T21:02:18.295Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2025-03-07T21:02:18.300Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.security.web.FilterChainProxy        : Securing DELETE /error
+2025-03-07T21:02:18.301Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:02:18.302Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.s.w.a.Http403ForbiddenEntryPoint     : Pre-authenticated entry point called. Rejecting access
+2025-03-07T21:02:35.598Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user
+2025-03-07T21:02:35.608Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:02:35.639Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.security.web.FilterChainProxy        : Secured DELETE /api/admin/delete-user
+2025-03-07T21:02:35.641Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.web.servlet.DispatcherServlet        : DELETE "/api/admin/delete-user", parameters={}
+2025-03-07T21:02:35.641Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#deleteUser(String, Authentication)
+2025-03-07T21:02:35.643Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.web.method.HandlerMethod             : Could not resolve parameter [0] in public org.springframework.http.ResponseEntity<java.lang.String> com.example.backend.controller.AdminController.deleteUser(java.lang.String,org.springframework.security.core.Authentication): Required request parameter 'username' for method parameter type String is not present
+2025-03-07T21:02:35.645Z  WARN 3575427 --- [braggly] [http-nio-9191-exec-9] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.bind.MissingServletRequestParameterException: Required request parameter 'username' for method parameter type String is not present]
+2025-03-07T21:02:35.645Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2025-03-07T21:02:35.647Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.security.web.FilterChainProxy        : Securing DELETE /error
+2025-03-07T21:02:35.648Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:02:35.649Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.s.w.a.Http403ForbiddenEntryPoint     : Pre-authenticated entry point called. Rejecting access
+2025-03-07T21:06:44.213Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /api/admin/delete-user
+2025-03-07T21:06:44.228Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:06:44.237Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /api/admin/delete-user
+2025-03-07T21:06:44.238Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] o.s.web.servlet.DispatcherServlet        : GET "/api/admin/delete-user", parameters={}
+2025-03-07T21:06:44.239Z  WARN 3575427 --- [braggly] [http-nio-9191-exec-8] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2025-03-07T21:06:44.240Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 405 METHOD_NOT_ALLOWED
+2025-03-07T21:06:44.242Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-03-07T21:06:44.242Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:06:44.243Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-8] o.s.s.w.a.Http403ForbiddenEntryPoint     : Pre-authenticated entry point called. Rejecting access
+2025-03-07T21:07:21.238Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user
+2025-03-07T21:07:21.251Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:07:21.259Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Secured DELETE /api/admin/delete-user
+2025-03-07T21:07:21.260Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : DELETE "/api/admin/delete-user", parameters={}
+2025-03-07T21:07:21.260Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#deleteUser(String, Authentication)
+2025-03-07T21:07:21.262Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.method.HandlerMethod             : Could not resolve parameter [0] in public org.springframework.http.ResponseEntity<java.lang.String> com.example.backend.controller.AdminController.deleteUser(java.lang.String,org.springframework.security.core.Authentication): Required request parameter 'username' for method parameter type String is not present
+2025-03-07T21:07:21.263Z  WARN 3575427 --- [braggly] [http-nio-9191-exec-1] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.bind.MissingServletRequestParameterException: Required request parameter 'username' for method parameter type String is not present]
+2025-03-07T21:07:21.264Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2025-03-07T21:07:21.266Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Securing DELETE /error
+2025-03-07T21:07:21.267Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:07:21.267Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.s.w.a.Http403ForbiddenEntryPoint     : Pre-authenticated entry point called. Rejecting access
+2025-03-07T21:07:53.987Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:07:53.989Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:07:53.991Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.s.w.a.Http403ForbiddenEntryPoint     : Pre-authenticated entry point called. Rejecting access
+2025-03-07T21:07:53.993Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Securing DELETE /error?username=nikodem1
+2025-03-07T21:07:53.993Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:07:53.994Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.s.s.w.a.Http403ForbiddenEntryPoint     : Pre-authenticated entry point called. Rejecting access
+2025-03-07T21:07:53.997Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+
+java.io.EOFException: null
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.fillReadBuffer(NioEndpoint.java:1295) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.read(NioEndpoint.java:1183) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.fill(Http11InputBuffer.java:795) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:351) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:270) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1743) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+2025-03-07T21:07:54.009Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-2] o.apache.coyote.http11.Http11Processor   : Error state [CLOSE_CONNECTION_NOW] reported while processing request
+
+java.io.EOFException: null
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.fillReadBuffer(NioEndpoint.java:1295) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.read(NioEndpoint.java:1183) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.fill(Http11InputBuffer.java:795) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:351) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:270) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1743) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+2025-03-07T21:08:15.875Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:08:15.886Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:08:15.901Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.s.security.web.FilterChainProxy        : Secured DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:08:15.907Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.s.web.servlet.DispatcherServlet        : DELETE "/api/admin/delete-user?username=nikodem1", parameters={masked}
+2025-03-07T21:08:15.907Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#deleteUser(String, Authentication)
+2025-03-07T21:08:15.920Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:08:15.969Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] org.hibernate.SQL                        : delete from users where id=?
+2025-03-07T21:08:15.980Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-07T21:08:15.981Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["User deleted successfully."]
+2025-03-07T21:08:15.985Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T21:08:15.990Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.apache.coyote.http11.Http11Processor   : Error parsing HTTP request header
+
+java.io.EOFException: null
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.fillReadBuffer(NioEndpoint.java:1295) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.read(NioEndpoint.java:1183) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.fill(Http11InputBuffer.java:795) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:351) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:270) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1743) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+2025-03-07T21:08:15.991Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-3] o.apache.coyote.http11.Http11Processor   : Error state [CLOSE_CONNECTION_NOW] reported while processing request
+
+java.io.EOFException: null
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.fillReadBuffer(NioEndpoint.java:1295) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.read(NioEndpoint.java:1183) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.fill(Http11InputBuffer.java:795) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:351) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:270) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1743) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.36.jar:10.1.36]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+2025-03-07T21:08:24.837Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:08:24.845Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:08:24.857Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Secured DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:08:24.859Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : DELETE "/api/admin/delete-user?username=nikodem1", parameters={masked}
+2025-03-07T21:08:24.862Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#deleteUser(String, Authentication)
+2025-03-07T21:08:24.866Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:08:24.868Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-07T21:08:24.869Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["User not found."]
+2025-03-07T21:08:24.870Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2025-03-07T21:09:25.741Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:09:25.756Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:09:25.764Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] o.s.security.web.FilterChainProxy        : Secured DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:09:25.765Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : DELETE "/api/admin/delete-user?username=nikodem1", parameters={masked}
+2025-03-07T21:09:25.765Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#deleteUser(String, Authentication)
+2025-03-07T21:09:25.768Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:09:25.770Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-07T21:09:25.770Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["User not found."]
+2025-03-07T21:09:25.772Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2025-03-07T21:09:36.838Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.security.web.FilterChainProxy        : Securing POST /api/admin/create-user
+2025-03-07T21:09:36.844Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:09:36.850Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.security.web.FilterChainProxy        : Secured POST /api/admin/create-user
+2025-03-07T21:09:36.850Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/admin/create-user", parameters={}
+2025-03-07T21:09:36.850Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#createUser(Map, Authentication)
+2025-03-07T21:09:36.855Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [{username=nikodem1, password=nikodem1}]
+2025-03-07T21:09:36.987Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] org.hibernate.SQL                        : insert into users (password,role,username) values (?,?,?)
+2025-03-07T21:09:37.008Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-07T21:09:37.009Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["User created successfully."]
+2025-03-07T21:09:37.013Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T21:09:43.752Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.security.web.FilterChainProxy        : Securing DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:09:43.757Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:09:43.762Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.security.web.FilterChainProxy        : Secured DELETE /api/admin/delete-user?username=nikodem1
+2025-03-07T21:09:43.762Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.web.servlet.DispatcherServlet        : DELETE "/api/admin/delete-user?username=nikodem1", parameters={masked}
+2025-03-07T21:09:43.763Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#deleteUser(String, Authentication)
+2025-03-07T21:09:43.764Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:09:43.766Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] org.hibernate.SQL                        : delete from users where id=?
+2025-03-07T21:09:43.768Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-07T21:09:43.769Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["User deleted successfully."]
+2025-03-07T21:09:43.770Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T21:09:56.681Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /api/admin/list-user
+2025-03-07T21:09:56.686Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:09:56.690Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /api/admin/list-user
+2025-03-07T21:09:56.691Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] o.s.web.servlet.DispatcherServlet        : GET "/api/admin/list-user", parameters={}
+2025-03-07T21:09:56.691Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AdminController#listUsers(Authentication)
+2025-03-07T21:09:56.692Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-03-07T21:09:56.693Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [[]]
+2025-03-07T21:09:56.694Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T21:25:47.161Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-07T21:25:49.238Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-07T21:26:01.297Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-07T21:26:01.738Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-07T21:26:02.660Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-07T21:26:11.063Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@55d0221d]
+2025-03-07T21:26:16.025Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-07T21:26:26.643Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'text/plain', given [*/*] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-07T21:26:26.740Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTM4Mjc4MCwiZXhwIjoxNzQxMzg2MzgwfQ.P (truncated)..."]
+2025-03-07T21:26:27.021Z DEBUG 3575427 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-07T21:49:30.738Z  WARN 3575427 --- [braggly] [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=54s247ms102µs180ns).
+2025-03-07T21:50:02.844Z  WARN 3575427 --- [braggly] [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=58s158ms83µs530ns).
+2025-03-07T22:03:00.932Z  WARN 3575427 --- [braggly] [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=50s596ms468µs49ns).
