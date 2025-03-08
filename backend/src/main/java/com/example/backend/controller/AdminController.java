@@ -10,11 +10,14 @@ import org.springframework.security.core.Authentication;
 import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
     private final UserService userService;
 
     public AdminController(UserService userService) {
@@ -57,20 +60,20 @@ public class AdminController {
         }
     }
 
-    
- @GetMapping("/list-user")
+    @GetMapping("/list-user")
     public ResponseEntity<List<Map<String, String>>> listUsers(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        
+        //logger.info("User {} is attempting to list all users", user.getUsername());
         if (!user.getRole().name().equals("ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        
+
         List<User> users = userService.getAllUsers();
+        //logger.info("Users =  {} ", users);
         List<Map<String, String>> userList = users.stream()
-            .map(u -> Map.of("username", u.getUsername(), "role", u.getRole().name()))
-            .collect(Collectors.toList());
-        
+                .map(u -> Map.of("username", u.getUsername(), "role", u.getRole().name()))
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(userList);
     }
 }
