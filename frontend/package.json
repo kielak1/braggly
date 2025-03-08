@@ -7,8 +7,8 @@
     "build": "next build && npm run build:css",
     "start": "next start",
     "lint": "next lint",
-    "watch:css": "npx tailwindcss -o /opt/braggly/frontend/styles/globals.css --watch",
-    "build:css": "npx tailwindcss -o /opt/braggly/frontend/styles/globals.css"
+    "watch:css": "npx tailwindcss -o styles/globals.css --watch",
+    "build:css": "npx tailwindcss -o styles/globals.css"
   },
   "dependencies": {
     "autoprefixer": "^10.4.20",
