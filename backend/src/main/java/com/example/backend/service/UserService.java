@@ -47,8 +47,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        // Implementation to retrieve all users
-        return List.of(); // Replace with actual implementation
+        return userRepository.findAll();
     }
 
 }
