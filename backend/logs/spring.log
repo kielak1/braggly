@@ -549,3 +549,8 @@ java.io.EOFException: null
 2025-03-08T17:50:44.175Z DEBUG 3710160 --- [braggly] [http-nio-9191-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
 2025-03-08T17:50:44.176Z DEBUG 3710160 --- [braggly] [http-nio-9191-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Writing [{username=nikodem1, role=USER}]
 2025-03-08T17:50:44.178Z DEBUG 3710160 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-08T23:11:14.137Z  INFO 3710160 --- [braggly] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-08T23:11:14.294Z  INFO 3710160 --- [braggly] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-08T23:11:14.511Z  INFO 3710160 --- [braggly] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-08T23:11:14.683Z  INFO 3710160 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-03-08T23:11:14.758Z  INFO 3710160 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
