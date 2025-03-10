@@ -2,36 +2,11 @@
 
 ## Opis projektu
 
-Projekt Braggly Backend to aplikacja serwerowa napisana w Spring Boot, która obsługuje różne operacje związane z użytkownikami, takie jak logowanie, tworzenie użytkowników, usuwanie użytkowników oraz wyświetlanie informacji o zalogowanym użytkowniku.
+Projekt Braggly Backend to aplikacja serwerowa napisana w Spring Boot, która docelowo będzie wpsierać analizę spektrogramów rentgenowskic. Aktualnie obsługuje jedynie różne operacje związane z użytkownikami, takie jak logowanie, tworzenie użytkowników, usuwanie użytkowników oraz wyświetlanie informacji o zalogowanym użytkowniku.
 
-## Wymagania
+## Dostępność
 
-- Java 17 lub nowsza
-- Maven 3.6.3 lub nowszy
-- Baza danych (np. MySQL, PostgreSQL)
-
-## Konfiguracja
-
-1. Sklonuj repozytorium:
-   ```bash
-   git clone https://github.com/twoje-repozytorium/braggly-backend.git
-   cd braggly-backend
-   ```
-
-2. Skonfiguruj bazę danych w pliku `application.properties`:
-   ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/braggly
-   spring.datasource.username=root
-   spring.datasource.password=haslo
-   spring.jpa.hibernate.ddl-auto=update
-   spring.jpa.show-sql=true
-   spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-   ```
-
-3. Uruchom aplikację:
-   ```bash
-   mvn spring-boot:run
-   ```
+System produkcyjny jes dostępny pod adresem: https://bragglybackend.kielak.com
 
 ## Endpointy
 
@@ -147,8 +122,8 @@ Projekt Braggly Backend to aplikacja serwerowa napisana w Spring Boot, która ob
 
 ## Autorzy
 
-- Imię Nazwisko - [GitHub](https://github.com/twoje-konto)
+- Imię Nazwisko - [GitHub](https://github.com/kielak1)
 
 ## Licencja
 
-Ten projekt jest licencjonowany na warunkach licencji MIT - zobacz plik [LICENSE](LICENSE) po więcej szczegółów.
+.....
