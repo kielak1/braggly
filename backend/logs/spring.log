@@ -643,3 +643,313 @@ java.io.EOFException: null
 2025-03-10T13:09:02.348Z DEBUG 4069356 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
 2025-03-10T13:09:02.349Z DEBUG 4069356 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYxMjE0MiwiZXhwIjoxNzQxNjE1NzQyfQ.0 (truncated)..."]
 2025-03-10T13:09:02.351Z DEBUG 4069356 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T13:15:46.872Z  INFO 4073762 --- [braggly] [main] com.example.backend.BackendApplication   : Starting BackendApplication using Java 17.0.13 with PID 4073762 (/opt/braggly/backend/build/classes/java/main started by rocky in /opt/braggly/backend)
+2025-03-10T13:15:46.876Z  INFO 4073762 --- [braggly] [main] com.example.backend.BackendApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-10T13:15:48.136Z  INFO 4073762 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-10T13:15:48.243Z  INFO 4073762 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 97 ms. Found 1 JPA repository interface.
+2025-03-10T13:15:49.115Z  INFO 4073762 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9191 (http)
+2025-03-10T13:15:49.131Z  INFO 4073762 --- [braggly] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-10T13:15:49.131Z  INFO 4073762 --- [braggly] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-03-10T13:15:49.186Z  INFO 4073762 --- [braggly] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-10T13:15:49.187Z  INFO 4073762 --- [braggly] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2240 ms
+2025-03-10T13:15:49.541Z  INFO 4073762 --- [braggly] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-10T13:15:49.601Z  INFO 4073762 --- [braggly] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-03-10T13:15:49.640Z  INFO 4073762 --- [braggly] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-03-10T13:15:50.011Z  INFO 4073762 --- [braggly] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-03-10T13:15:50.057Z  INFO 4073762 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-03-10T13:15:50.184Z  INFO 4073762 --- [braggly] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4ed19b69
+2025-03-10T13:15:50.187Z  INFO 4073762 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-03-10T13:15:50.292Z  INFO 4073762 --- [braggly] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 13.18
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-03-10T13:15:51.396Z  INFO 4073762 --- [braggly] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-03-10T13:15:51.464Z  INFO 4073762 --- [braggly] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-10T13:15:52.020Z DEBUG 4073762 --- [braggly] [main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2025-03-10T13:15:52.200Z DEBUG 4073762 --- [braggly] [main] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T13:15:52.327Z  WARN 4073762 --- [braggly] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-03-10T13:15:52.364Z  INFO 4073762 --- [braggly] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-03-10T13:15:52.530Z DEBUG 4073762 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 8 mappings in 'requestMappingHandlerMapping'
+2025-03-10T13:15:52.693Z DEBUG 4073762 --- [braggly] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-03-10T13:15:52.870Z  INFO 4073762 --- [braggly] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-03-10T13:15:52.964Z DEBUG 4073762 --- [braggly] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-03-10T13:15:53.119Z DEBUG 4073762 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-03-10T13:15:53.201Z DEBUG 4073762 --- [braggly] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-03-10T13:15:53.559Z  INFO 4073762 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9191 (http) with context path '/'
+2025-03-10T13:15:53.585Z  INFO 4073762 --- [braggly] [main] com.example.backend.BackendApplication   : Started BackendApplication in 7.377 seconds (process running for 7.939)
+2025-03-10T13:37:56.881Z  INFO 4073762 --- [braggly] [http-nio-9191-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-10T13:37:56.882Z  INFO 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-10T13:37:56.882Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-03-10T13:37:56.883Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-03-10T13:37:56.883Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-03-10T13:37:56.887Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@2456716b
+2025-03-10T13:37:56.889Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@258f97f8
+2025-03-10T13:37:56.890Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-03-10T13:37:56.893Z  INFO 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 11 ms
+2025-03-10T13:37:56.945Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Securing OPTIONS /api/auth/login
+2025-03-10T13:37:57.005Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T13:37:57.012Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T13:37:57.019Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T13:37:57.023Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T13:37:57.025Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T13:37:57.223Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@725f1f1e]
+2025-03-10T13:37:57.244Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T13:37:57.423Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T13:37:57.424Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYxMzg3NywiZXhwIjoxNzQxNjE3NDc3fQ.D (truncated)..."]
+2025-03-10T13:37:57.428Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T13:37:59.930Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T13:37:59.935Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T13:37:59.938Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T13:37:59.939Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T13:37:59.940Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T13:37:59.942Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@747bcab0]
+2025-03-10T13:37:59.946Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T13:38:00.083Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T13:38:00.084Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYxMzg4MCwiZXhwIjoxNzQxNjE3NDgwfQ.r (truncated)..."]
+2025-03-10T13:38:00.085Z DEBUG 4073762 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T13:47:58.031Z  INFO 4073762 --- [braggly] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-10T13:47:58.041Z  INFO 4073762 --- [braggly] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-10T13:47:58.053Z  INFO 4073762 --- [braggly] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-10T13:47:58.060Z  INFO 4073762 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-03-10T13:47:58.072Z  INFO 4073762 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-03-10T18:54:20.998Z  INFO 4105389 --- [braggly] [main] com.example.backend.BackendApplication   : Starting BackendApplication using Java 17.0.13 with PID 4105389 (/opt/braggly/backend/build/classes/java/main started by rocky in /opt/braggly/backend)
+2025-03-10T18:54:21.002Z  INFO 4105389 --- [braggly] [main] com.example.backend.BackendApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-10T18:54:22.207Z  INFO 4105389 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-10T18:54:22.302Z  INFO 4105389 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 80 ms. Found 1 JPA repository interface.
+2025-03-10T18:54:23.404Z  INFO 4105389 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9191 (http)
+2025-03-10T18:54:23.428Z  INFO 4105389 --- [braggly] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-10T18:54:23.429Z  INFO 4105389 --- [braggly] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-03-10T18:54:23.510Z  INFO 4105389 --- [braggly] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-10T18:54:23.511Z  INFO 4105389 --- [braggly] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2426 ms
+2025-03-10T18:54:24.008Z  INFO 4105389 --- [braggly] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-10T18:54:24.106Z  INFO 4105389 --- [braggly] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-03-10T18:54:24.169Z  INFO 4105389 --- [braggly] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-03-10T18:54:24.519Z  INFO 4105389 --- [braggly] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-03-10T18:54:24.555Z  INFO 4105389 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-03-10T18:54:24.708Z  INFO 4105389 --- [braggly] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7cbf4f8c
+2025-03-10T18:54:24.710Z  INFO 4105389 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-03-10T18:54:24.815Z  INFO 4105389 --- [braggly] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 13.18
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-03-10T18:54:25.880Z  INFO 4105389 --- [braggly] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-03-10T18:54:25.971Z  INFO 4105389 --- [braggly] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-10T18:54:26.438Z DEBUG 4105389 --- [braggly] [main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2025-03-10T18:54:26.674Z DEBUG 4105389 --- [braggly] [main] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T18:54:26.858Z  WARN 4105389 --- [braggly] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-03-10T18:54:26.901Z  INFO 4105389 --- [braggly] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-03-10T18:54:27.088Z DEBUG 4105389 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 8 mappings in 'requestMappingHandlerMapping'
+2025-03-10T18:54:27.221Z DEBUG 4105389 --- [braggly] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-03-10T18:54:27.357Z  INFO 4105389 --- [braggly] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-03-10T18:54:27.466Z DEBUG 4105389 --- [braggly] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-03-10T18:54:27.606Z DEBUG 4105389 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-03-10T18:54:27.684Z DEBUG 4105389 --- [braggly] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-03-10T18:54:28.053Z  INFO 4105389 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9191 (http) with context path '/'
+2025-03-10T18:54:28.081Z  INFO 4105389 --- [braggly] [main] com.example.backend.BackendApplication   : Started BackendApplication in 7.875 seconds (process running for 8.789)
+2025-03-10T19:41:11.233Z  INFO 4105389 --- [braggly] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-10T19:41:11.444Z  INFO 4105389 --- [braggly] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-10T19:41:11.532Z  INFO 4105389 --- [braggly] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-10T19:41:11.563Z  INFO 4105389 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-03-10T19:41:11.581Z  INFO 4105389 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-03-10T19:41:30.541Z  INFO 4126257 --- [braggly] [main] com.example.backend.BackendApplication   : Starting BackendApplication using Java 17.0.13 with PID 4126257 (/opt/braggly/backend/build/classes/java/main started by rocky in /opt/braggly/backend)
+2025-03-10T19:41:30.555Z  INFO 4126257 --- [braggly] [main] com.example.backend.BackendApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-10T19:41:33.398Z  INFO 4126257 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-10T19:41:33.525Z  INFO 4126257 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 102 ms. Found 1 JPA repository interface.
+2025-03-10T19:41:35.366Z  INFO 4126257 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9191 (http)
+2025-03-10T19:41:35.389Z  INFO 4126257 --- [braggly] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-10T19:41:35.392Z  INFO 4126257 --- [braggly] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-03-10T19:41:35.481Z  INFO 4126257 --- [braggly] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-10T19:41:35.482Z  INFO 4126257 --- [braggly] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4719 ms
+2025-03-10T19:41:36.209Z  INFO 4126257 --- [braggly] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-10T19:41:36.376Z  INFO 4126257 --- [braggly] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-03-10T19:41:36.469Z  INFO 4126257 --- [braggly] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-03-10T19:41:37.114Z  INFO 4126257 --- [braggly] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-03-10T19:41:37.166Z  INFO 4126257 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-03-10T19:41:37.320Z  INFO 4126257 --- [braggly] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@335b3d6
+2025-03-10T19:41:37.322Z  INFO 4126257 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-03-10T19:41:37.509Z  INFO 4126257 --- [braggly] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 13.18
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-03-10T19:41:39.453Z  INFO 4126257 --- [braggly] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-03-10T19:41:39.577Z  INFO 4126257 --- [braggly] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-10T19:41:40.135Z DEBUG 4126257 --- [braggly] [main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2025-03-10T19:41:40.501Z DEBUG 4126257 --- [braggly] [main] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T19:41:40.673Z  WARN 4126257 --- [braggly] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-03-10T19:41:40.721Z  INFO 4126257 --- [braggly] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-03-10T19:41:40.934Z DEBUG 4126257 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 8 mappings in 'requestMappingHandlerMapping'
+2025-03-10T19:41:41.230Z DEBUG 4126257 --- [braggly] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-03-10T19:41:41.441Z  INFO 4126257 --- [braggly] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-03-10T19:41:41.554Z DEBUG 4126257 --- [braggly] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-03-10T19:41:41.743Z DEBUG 4126257 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-03-10T19:41:41.808Z DEBUG 4126257 --- [braggly] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-03-10T19:41:42.147Z  INFO 4126257 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9191 (http) with context path '/'
+2025-03-10T19:41:42.219Z  INFO 4126257 --- [braggly] [main] com.example.backend.BackendApplication   : Started BackendApplication in 13.844 seconds (process running for 14.805)
+2025-03-10T19:44:48.748Z  INFO 4126257 --- [braggly] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-10T19:44:49.142Z  INFO 4126257 --- [braggly] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-10T19:44:49.275Z  INFO 4126257 --- [braggly] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-10T19:44:49.373Z  INFO 4126257 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-03-10T19:44:49.431Z  INFO 4126257 --- [braggly] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-03-10T19:45:02.080Z  INFO 4128535 --- [braggly] [main] com.example.backend.BackendApplication   : Starting BackendApplication using Java 17.0.13 with PID 4128535 (/opt/braggly/backend/build/classes/java/main started by rocky in /opt/braggly/backend)
+2025-03-10T19:45:02.090Z  INFO 4128535 --- [braggly] [main] com.example.backend.BackendApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-10T19:45:04.960Z  INFO 4128535 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-10T19:45:05.123Z  INFO 4128535 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 137 ms. Found 1 JPA repository interface.
+2025-03-10T19:45:07.319Z  INFO 4128535 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9191 (http)
+2025-03-10T19:45:07.362Z  INFO 4128535 --- [braggly] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-10T19:45:07.365Z  INFO 4128535 --- [braggly] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-03-10T19:45:07.563Z  INFO 4128535 --- [braggly] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-10T19:45:07.567Z  INFO 4128535 --- [braggly] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5328 ms
+2025-03-10T20:03:32.832Z  INFO 3476 --- [braggly] [main] com.example.backend.BackendApplication   : Starting BackendApplication using Java 17.0.13 with PID 3476 (/opt/braggly/backend/build/classes/java/main started by rocky in /opt/braggly/backend)
+2025-03-10T20:03:32.845Z  INFO 3476 --- [braggly] [main] com.example.backend.BackendApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-10T20:03:33.874Z  INFO 3476 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-10T20:03:33.966Z  INFO 3476 --- [braggly] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 74 ms. Found 1 JPA repository interface.
+2025-03-10T20:03:35.013Z  INFO 3476 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9191 (http)
+2025-03-10T20:03:35.028Z  INFO 3476 --- [braggly] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-10T20:03:35.029Z  INFO 3476 --- [braggly] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-03-10T20:03:35.090Z  INFO 3476 --- [braggly] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-10T20:03:35.091Z  INFO 3476 --- [braggly] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2202 ms
+2025-03-10T20:03:35.490Z  INFO 3476 --- [braggly] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-10T20:03:35.563Z  INFO 3476 --- [braggly] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-03-10T20:03:35.617Z  INFO 3476 --- [braggly] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-03-10T20:03:35.997Z  INFO 3476 --- [braggly] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-03-10T20:03:36.035Z  INFO 3476 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-03-10T20:03:36.180Z  INFO 3476 --- [braggly] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4d664323
+2025-03-10T20:03:36.189Z  INFO 3476 --- [braggly] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-03-10T20:03:36.296Z  INFO 3476 --- [braggly] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 13.18
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-03-10T20:03:37.269Z  INFO 3476 --- [braggly] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-03-10T20:03:37.354Z  INFO 3476 --- [braggly] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-10T20:03:37.813Z DEBUG 3476 --- [braggly] [main] o.s.w.f.ServerHttpObservationFilter      : Filter 'webMvcObservationFilter' configured for use
+2025-03-10T20:03:38.006Z DEBUG 3476 --- [braggly] [main] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:03:38.121Z  WARN 3476 --- [braggly] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-03-10T20:03:38.164Z  INFO 3476 --- [braggly] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-03-10T20:03:38.344Z DEBUG 3476 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 8 mappings in 'requestMappingHandlerMapping'
+2025-03-10T20:03:38.517Z DEBUG 3476 --- [braggly] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-03-10T20:03:38.685Z  INFO 3476 --- [braggly] [main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-03-10T20:03:38.794Z DEBUG 3476 --- [braggly] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-03-10T20:03:39.026Z DEBUG 3476 --- [braggly] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-03-10T20:03:39.101Z DEBUG 3476 --- [braggly] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-03-10T20:03:39.447Z  INFO 3476 --- [braggly] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9191 (http) with context path '/'
+2025-03-10T20:03:39.472Z  INFO 3476 --- [braggly] [main] com.example.backend.BackendApplication   : Started BackendApplication in 7.481 seconds (process running for 7.995)
+2025-03-10T20:13:32.622Z  INFO 3476 --- [braggly] [http-nio-9191-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-10T20:13:32.647Z  INFO 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-10T20:13:32.655Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-03-10T20:13:32.656Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-03-10T20:13:32.657Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-03-10T20:13:32.714Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@74ea1cd0
+2025-03-10T20:13:32.718Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@cfe881a
+2025-03-10T20:13:32.720Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-03-10T20:13:32.721Z  INFO 3476 --- [braggly] [http-nio-9191-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 72 ms
+2025-03-10T20:13:32.821Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Securing OPTIONS /api/auth/login
+2025-03-10T20:13:32.935Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:13:32.956Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:13:32.973Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:13:32.981Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:13:32.990Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:13:33.311Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@4994a0d]
+2025-03-10T20:13:33.430Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:13:33.771Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:13:33.773Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzNzYxMywiZXhwIjoxNzQxNjQxMjEzfQ.t (truncated)..."]
+2025-03-10T20:13:33.782Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:13:35.847Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:13:35.848Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:13:35.849Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:13:35.850Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:13:35.851Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:13:35.853Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@62d713f1]
+2025-03-10T20:13:35.855Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:13:36.003Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:13:36.005Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzNzYxNSwiZXhwIjoxNzQxNjQxMjE1fQ.c (truncated)..."]
+2025-03-10T20:13:36.008Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:13:38.066Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Securing OPTIONS /api/auth/login
+2025-03-10T20:13:38.089Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:13:38.092Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:13:38.094Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:13:38.094Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:13:38.096Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:13:38.101Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@4ca4b9e6]
+2025-03-10T20:13:38.106Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:13:38.246Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:13:38.247Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzNzYxOCwiZXhwIjoxNzQxNjQxMjE4fQ.Z (truncated)..."]
+2025-03-10T20:13:38.248Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:13:40.137Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:13:40.141Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:13:40.151Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:13:40.153Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:13:40.154Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:13:40.158Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@5089082d]
+2025-03-10T20:13:40.166Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:13:40.318Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:13:40.319Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzNzYyMCwiZXhwIjoxNzQxNjQxMjIwfQ.0 (truncated)..."]
+2025-03-10T20:13:40.321Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:13:41.826Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:13:41.830Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:13:41.832Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:13:41.832Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:13:41.833Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:13:41.835Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@2d8c584e]
+2025-03-10T20:13:41.840Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:13:41.987Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:13:41.987Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzNzYyMSwiZXhwIjoxNzQxNjQxMjIxfQ.u (truncated)..."]
+2025-03-10T20:13:41.991Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:13:43.201Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-8] o.s.security.web.FilterChainProxy        : Securing OPTIONS /api/auth/login
+2025-03-10T20:13:43.216Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:13:43.219Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:13:43.220Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:13:43.220Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:13:43.221Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:13:43.223Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@3bbc4b3b]
+2025-03-10T20:13:43.227Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:13:43.432Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:13:43.433Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzNzYyMywiZXhwIjoxNzQxNjQxMjIzfQ.X (truncated)..."]
+2025-03-10T20:13:43.435Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:15:59.180Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-1] o.s.security.web.FilterChainProxy        : Securing OPTIONS /api/auth/login
+2025-03-10T20:15:59.212Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:15:59.214Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:15:59.215Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:15:59.222Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:15:59.223Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:15:59.230Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@32b0213d]
+2025-03-10T20:15:59.242Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:15:59.390Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:15:59.391Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzNzc1OSwiZXhwIjoxNzQxNjQxMzU5fQ.D (truncated)..."]
+2025-03-10T20:15:59.393Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:24:08.116Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-2] o.s.security.web.FilterChainProxy        : Securing OPTIONS /api/auth/login
+2025-03-10T20:24:08.143Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:24:08.146Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:24:08.147Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:24:08.148Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:24:08.149Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:24:08.153Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@22eaa855]
+2025-03-10T20:24:08.160Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:24:08.292Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:24:08.292Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzODI0OCwiZXhwIjoxNzQxNjQxODQ4fQ.F (truncated)..."]
+2025-03-10T20:24:08.298Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-03-10T20:24:11.608Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.security.web.FilterChainProxy        : Securing POST /api/auth/login
+2025-03-10T20:24:11.613Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-03-10T20:24:11.616Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.security.web.FilterChainProxy        : Secured POST /api/auth/login
+2025-03-10T20:24:11.617Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2025-03-10T20:24:11.619Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.backend.controller.AuthController#login(User)
+2025-03-10T20:24:11.622Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.backend.model.User@582a500e]
+2025-03-10T20:24:11.625Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] org.hibernate.SQL                        : select u1_0.id,u1_0.password,u1_0.role,u1_0.username from users u1_0 where u1_0.username=?
+2025-03-10T20:24:11.749Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json] and supported [text/plain, */*, application/json, application/*+json]
+2025-03-10T20:24:11.752Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc0MTYzODI1MSwiZXhwIjoxNzQxNjQxODUxfQ.s (truncated)..."]
+2025-03-10T20:24:11.755Z DEBUG 3476 --- [braggly] [http-nio-9191-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
