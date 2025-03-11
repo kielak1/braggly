@@ -49,6 +49,16 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured:5.3.0'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Google API Client do obsługi OAuth
+    implementation 'com.google.api-client:google-api-client:1.33.0'
+    implementation 'com.google.http-client:google-http-client-gson:1.39.2'
+    // Google API Client do obsługi OAuth 2.0
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.18.0'
+    implementation 'com.google.api-client:google-api-client:2.2.0'
+    implementation 'com.google.http-client:google-http-client-gson:1.43.3'
+    implementation 'com.google.http-client:google-http-client-jackson2:1.43.3'
+
 }
 
 tasks.named('test') {
