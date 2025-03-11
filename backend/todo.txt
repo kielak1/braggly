@@ -1,0 +1,15 @@
+baza danych
+-cenniki pakietów
+-uzytkownik
+   -historia zakupow
+   -biezacy stan kredytów
+
+- Endpointy
+   - pobieranie aktualnych pakietów
+   - dodanie pakietu
+   - kasowanie pakietu
+
+
+
+
+R
