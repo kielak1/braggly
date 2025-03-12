@@ -80,11 +80,15 @@ public class AuthController {
             User user;
 
             if (userOptional.isEmpty()) {
-                user = new User();
-                user.setUsername(email);
-                user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString())); // Generowanie losowego hasła
-                user.setRole(Role.USER);
+                user = new User(email, passwordEncoder.encode(UUID.randomUUID().toString()), Role.USER);
                 userRepository.save(user);
+
+                // user = new User();
+                // user.setUsername(email);
+                // user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString())); //
+                // Generowanie losowego hasła
+                // user.setRole(Role.USER);
+                // userRepository.save(user);
             } else {
                 user = userOptional.get();
             }
