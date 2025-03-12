@@ -1,22 +1,3 @@
-// package com.example.backend.model;
-
-// import java.time.LocalDateTime;
-
-// import jakarta.persistence.*;
-// import lombok.Getter;
-// import lombok.Setter;
-
-// @Getter
-// @Setter
-// @Entity
-// public class UserCredits {
-//     @Id
-//     private Long userId;
-//     private int balance;
-//     private LocalDateTime lastUpdated;
-// }
-
-
 package com.example.backend.model;
 
 import java.time.LocalDateTime;
