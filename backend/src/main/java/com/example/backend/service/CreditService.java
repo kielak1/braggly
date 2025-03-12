@@ -52,6 +52,7 @@ public class CreditService {
                 });
 
         userCredits.setBalance(userCredits.getBalance() + creditPackage.getCredits());
+        userCredits.setLastUpdated(LocalDateTime.now()); // Aktualizacja lastUpdated
         userCreditsRepository.save(userCredits);
 
         CreditPurchaseHistory history = new CreditPurchaseHistory();
@@ -97,45 +98,27 @@ public class CreditService {
 
     @Transactional
     public ResponseEntity<?> assignCredits(Long userId, Long packageId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-        CreditPackage creditPackage = creditPackageRepository.findById(packageId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Credit package not found"));
-
-        // Pobierz wpis UserCredits lub stwórz nowy, jeśli nie istnieje
+        // Sprawdzamy i aktualizujemy userCredits (jeśli lastUpdated jest starsze)
         UserCredits userCredits = userCreditsRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserCredits newCredits = new UserCredits();
-                    newCredits.setUser(user);
-                    newCredits.setBalance(0); // Startowy stan
-                    return userCreditsRepository.save(newCredits); // Zapis nowego wpisu
+                    newCredits.setUserId(userId);
+                    newCredits.setBalance(0);
+                    return userCreditsRepository.save(newCredits);
                 });
 
-        // Sprawdzenie lastUpdated i redukcja balance jeśli konieczne
         if (userCredits.getLastUpdated() != null) {
             LocalDate lastUpdatedDate = userCredits.getLastUpdated().toLocalDate();
             LocalDate today = LocalDate.now();
             long daysBetween = ChronoUnit.DAYS.between(lastUpdatedDate, today);
             if (daysBetween > 0) {
-                userCredits.setBalance(userCredits.getBalance() - (int) daysBetween);
+                int newBalance = userCredits.getBalance() - (int) daysBetween;
+                userCredits.setBalance(Math.max(newBalance, 0));
             }
         }
 
-        // Zaktualizuj saldo
-        userCredits.setBalance(userCredits.getBalance() + creditPackage.getCredits());
-        userCredits.setLastUpdated(LocalDateTime.now());
-
-        // Zapisz aktualizację
-        userCreditsRepository.save(userCredits);
-
-        // Dodanie wpisu do CreditPurchaseHistory
-        CreditPurchaseHistory history = new CreditPurchaseHistory();
-        history.setUserId(userId);
-        history.setCreditsPurchased(creditPackage.getCredits());
-        history.setAmountPaid(creditPackage.getPriceInCents());
-        history.setPurchaseDate(LocalDateTime.now());
-        creditPurchaseHistoryRepository.save(history);
+        // Wywołujemy purchaseCredits, aby uniknąć duplikacji logiki
+        purchaseCredits(userId, packageId);
 
         return ResponseEntity.ok("Credits assigned successfully");
     }
