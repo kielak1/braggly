@@ -13,13 +13,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -46,24 +46,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Wyłącza CSRF
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless JWT
+            .csrf(csrf -> csrf.disable()) // Wyłącza CSRF dla REST API
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT = Stateless
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()  // Logowanie dostępne dla wszystkich
-                .requestMatchers("/api/hello").authenticated() // Hello wymaga autoryzacji
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/docs").permitAll() // 🔥 Swagger dostępny dla zalogowanych użytkowników
+                .requestMatchers("/api/auth/**").permitAll() // 🔓 Publiczne endpointy do logowania
+                .requestMatchers("/api/hello").authenticated() // 📌 API wymaga autoryzacji
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())); // 🔥 DODANE - KONFIGURACJA CORS
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT Security
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())); // 🔥 CORS
 
         return http.build();
     }
 
-    // 🔥 Konfiguracja CORS przeniesiona tutaj
+    // 🔥 Konfiguracja CORS
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4000", "https://braggly.kielak.com","http://aprobo.kielak.com:4000" )); // 🔥 Twoje domeny frontendu
+        config.setAllowedOrigins(List.of("http://localhost:4000", "https://braggly.kielak.com", "http://aprobo.kielak.com:4000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true); // Obsługa sesji i ciasteczek
