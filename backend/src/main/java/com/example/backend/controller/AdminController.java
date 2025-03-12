@@ -63,17 +63,19 @@ public class AdminController {
     @GetMapping("/list-user")
     public ResponseEntity<List<Map<String, String>>> listUsers(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        //logger.info("User {} is attempting to list all users", user.getUsername());
+        // logger.info("User {} is attempting to list all users", user.getUsername());
         if (!user.getRole().name().equals("ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<User> users = userService.getAllUsers();
-        //logger.info("Users =  {} ", users);
+        // logger.info("Users = {} ", users);
         List<Map<String, String>> userList = users.stream()
-                .map(u -> Map.of("username", u.getUsername(), "role", u.getRole().name()))
+                .map(u -> Map.of(
+                        "id", String.valueOf(u.getId()), // Zamiana Long na String
+                        "username", u.getUsername(),
+                        "role", u.getRole().name()))
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(userList);
     }
 }

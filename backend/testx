@@ -1,0 +1,64 @@
+#!/bin/bash
+# Ustawienia
+
+BASE_URL="http://localhost:9191"
+USERNAME="admin"
+PASSWORD="admin"
+
+# 1. Pobranie tokena
+
+TOKEN=$(curl -s -X POST "$BASE_URL/api/auth/login"  -H "Content-Type: application/json"  -d "{\"username\": \"$USERNAME\", \"password\": \"$PASSWORD\"}" | jq -r '.token')
+
+# Sprawdzenie czy token został pobrany
+if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
+    echo "❌ Błąd: Nie udało się pobrać tokena!"
+    exit 1
+fi
+
+echo "✅ Token pobrany: $TOKEN"
+
+
+# 7. Użycie tokena do wywołania /api/list-user
+
+USER_LIST=$(curl -s -X GET "$BASE_URL/api/admin/list-user" -H "Authorization: Bearer $TOKEN")
+echo "🔍 Odpowiedź z /api/list-user: $USER_LIST"
+
+# 8. Pobranie ID pierwszego użytkownika z listy zwróconej w JSON
+USER_ID=$(echo "$USER_LIST" | jq -r '.[1].id')
+
+if [ "$USER_ID" == "null" ] || [ -z "$USER_ID" ]; then
+    echo "❌ Błąd: Nie udało się pobrać ID użytkownika!"
+    exit 1
+fi
+
+echo "📌 Zapamiętane ID użytkownika: $USER_ID"
+
+# 9. Pobranie numeru pakietu do dodania do użytkownika
+PACKAGE_ID=$(curl -s -X GET "$BASE_URL/credits/packages" -H "Authorization: Bearer $TOKEN" | jq -r '.[0].id')
+
+echo "🔍 Odpowiedź z /credits/packages: $(curl -s -X GET "$BASE_URL/credits/packages" -H "Authorization: Bearer $TOKEN")"
+
+if [ "$PACKAGE_ID" == "null" ] || [ -z "$PACKAGE_ID" ]; then
+    echo "❌ Błąd: Nie udało się pobrać ID pakietu!"
+    exit 1
+fi
+
+echo "📌 Zapamiętany ID pakietu do dodania : $PACKAGE_ID do użytkownika $USER_ID"
+
+# 10. Przypisanie kredytów użytkownikowi
+
+# JSON_PAYLOAD="{\"userId\": \"$USER_ID\", \"packageId\": \"$PACKAGE_ID\"}"
+# echo "📦 JSON wysyłany w żądaniu: $JSON_PAYLOAD"
+
+# RESPONSE=$(curl -s -v -X POST "$BASE_URL/credits/assign" \
+#   -H "Authorization: Bearer $TOKEN"  \
+#   -H "Content-Type: application/json" \
+#   -d "$JSON_PAYLOAD")
+
+RESPONSE=$(curl -s -v -X POST "$BASE_URL/credits/assign" \
+  -H "Authorization: Bearer $TOKEN"  \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data "userId=$USER_ID&packageId=$PACKAGE_ID")
+
+
+echo "🎯 Odpowiedź z przypisania kredytów użytkownikowi: $RESPONSE"
