@@ -107,20 +107,25 @@ public class CreditService {
                     return userCreditsRepository.save(newCredits);
                 });
 
+        updateUserCreditsBalance(userCredits);
+
+        // Wywołujemy purchaseCredits, aby uniknąć duplikacji logiki
+        purchaseCredits(userId, packageId);
+        return ResponseEntity.ok("Credits assigned successfully");
+    }
+
+    private void updateUserCreditsBalance(UserCredits userCredits) {
         if (userCredits.getLastUpdated() != null) {
             LocalDate lastUpdatedDate = userCredits.getLastUpdated().toLocalDate();
             LocalDate today = LocalDate.now();
             long daysBetween = ChronoUnit.DAYS.between(lastUpdatedDate, today);
             if (daysBetween > 0) {
+                int creditsUsed = (int) Math.min(daysBetween, userCredits.getBalance());
+                useCredits(userCredits.getUserId(), "time", creditsUsed);
                 int newBalance = userCredits.getBalance() - (int) daysBetween;
                 userCredits.setBalance(Math.max(newBalance, 0));
             }
         }
-
-        // Wywołujemy purchaseCredits, aby uniknąć duplikacji logiki
-        purchaseCredits(userId, packageId);
-
-        return ResponseEntity.ok("Credits assigned successfully");
     }
 
     @Transactional
