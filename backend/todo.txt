@@ -1,3 +1,7 @@
+przy tworzeniu rekordu przy logowaniu przez google nie tworzy sie rekord UserCredits
+
+
+
 dodac funkcje i endpoint 
  - zwiekszenie balansu uzytkownika o pakiet
  - odliczenie zuxytych kredytow uzytkownikowi

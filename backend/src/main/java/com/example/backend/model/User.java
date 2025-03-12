@@ -30,12 +30,17 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    public User() {}
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private UserCredits userCredits;
+
+    public User() {
+    }
 
     public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.userCredits = new UserCredits(this, 0); // Automatyczne utworzenie powiązanego rekordu
     }
 
     public Long getId() {
@@ -52,6 +57,17 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public UserCredits getUserCredits() {
+        return userCredits;
+    }
+
+    public void setUserCredits(UserCredits userCredits) {
+        this.userCredits = userCredits;
+        if (userCredits != null) {
+            userCredits.setUser(this); // Synchronizacja referencji
+        }
     }
 
     @Override

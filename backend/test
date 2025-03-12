@@ -22,11 +22,8 @@ RESPONSE=$(curl -s -X GET "$BASE_URL/api/hello" -H "Authorization: Bearer $TOKEN
 echo "🔍 Odpowiedź z /api/hello: $RESPONSE"
 
 # 3. Dodanie pakietu kredytowego
-NEW_PACKAGE='{"credits": 100, "priceInCents": 999}'
-RESPONSE=$(curl -s -X POST "$BASE_URL/credits/packages" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "$NEW_PACKAGE")
+NEW_PACKAGE='{"credits": 5, "priceInCents": 45}'
+RESPONSE=$(curl -s -X POST "$BASE_URL/credits/packages"  -H "Authorization: Bearer $TOKEN"  -H "Content-Type: application/json"  -d "$NEW_PACKAGE")
 echo "🆕 Odpowiedź z dodania pakietu: $RESPONSE"
 
 # 4. Pobranie ID pierwszego pakietu
