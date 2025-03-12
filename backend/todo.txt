@@ -1,3 +1,32 @@
+dodac funkcje i endpoint 
+ - zwiekszenie balansu uzytkownika o pakiet
+ - odliczenie zuxytych kredytow uzytkownikowi
+
+
+zastanowic sie czy nie zdefiniowac relacji w bazie
+
+
+Rozbuduj bazę danych przesłanego projektu o struktury które będą wykorzystywane do rozliczania użytkowników z korzystania z systemu.
+Jednostką rozliczeniową będą kredyty. Użytkownik będzie mógł kupowac kredyty w pakietach. Cenniki pakietów są dynamiczne i powinny być w bazie.
+Kązdy pakiet powinien mieć przynajmniej dwa pola: liczba kredytów, wartośąć w groszach za pakiet
+
+Informacje o użytkowniku należy uzpełnić o saldo posiadanych kredytów.
+
+Powinn być historia zakupywania kredytów przez użytkownika
+Historia zuzywania kredytów. rodzaj zuzycia, data odpisu i wartosc odpisu.
+
+Należy zaimplementowć endpointy do:
+   - pobieranie aktualnych pakietów    - kazdy uytkownik
+   - dodanie pakietu   -  rola ADMIN
+   - kasowanie pakietu   - rola ADMIN
+   
+   - historia zakupow dla zalogowanego uzytkownika 
+   - historia zuycia dla zalogowanego uzytkownika
+
+zawsze poslugujemy sie groszami jako jednosta rozliczeniowa
+
+
+
 baza danych
 -cenniki pakietów
 -uzytkownik
@@ -8,8 +37,22 @@ baza danych
    - pobieranie aktualnych pakietów
    - dodanie pakietu
    - kasowanie pakietu
+   
 
 
 
+package com.example.backend.repository;
 
-R
+import com.example.backend.model.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CreditPackageRepository extends JpaRepository<CreditPackage, Long> {}
+
+public interface UserCreditsRepository extends JpaRepository<UserCredits, Long> {}
+
+public interface CreditPurchaseHistoryRepository extends JpaRepository<CreditPurchaseHistory, Long> {}
+
+public interface CreditUsageHistoryRepository extends JpaRepository<CreditUsageHistory, Long> {}
+
+
+
