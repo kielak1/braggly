@@ -6,6 +6,10 @@ dodac funkcje i endpoint
 zastanowic sie czy nie zdefiniowac relacji w bazie
 
 
+uzycie  SpringDoc OpenAPI
+
+
+
 Rozbuduj bazę danych przesłanego projektu o struktury które będą wykorzystywane do rozliczania użytkowników z korzystania z systemu.
 Jednostką rozliczeniową będą kredyty. Użytkownik będzie mógł kupowac kredyty w pakietach. Cenniki pakietów są dynamiczne i powinny być w bazie.
 Kązdy pakiet powinien mieć przynajmniej dwa pola: liczba kredytów, wartośąć w groszach za pakiet

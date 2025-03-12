@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 
@@ -110,11 +112,30 @@ public class CreditService {
                     return userCreditsRepository.save(newCredits); // Zapis nowego wpisu
                 });
 
+        // Sprawdzenie lastUpdated i redukcja balance jeśli konieczne
+        if (userCredits.getLastUpdated() != null) {
+            LocalDate lastUpdatedDate = userCredits.getLastUpdated().toLocalDate();
+            LocalDate today = LocalDate.now();
+            long daysBetween = ChronoUnit.DAYS.between(lastUpdatedDate, today);
+            if (daysBetween > 0) {
+                userCredits.setBalance(userCredits.getBalance() - (int) daysBetween);
+            }
+        }
+
         // Zaktualizuj saldo
         userCredits.setBalance(userCredits.getBalance() + creditPackage.getCredits());
+        userCredits.setLastUpdated(LocalDateTime.now());
 
         // Zapisz aktualizację
         userCreditsRepository.save(userCredits);
+
+        // Dodanie wpisu do CreditPurchaseHistory
+        CreditPurchaseHistory history = new CreditPurchaseHistory();
+        history.setUserId(userId);
+        history.setCreditsPurchased(creditPackage.getCredits());
+        history.setAmountPaid(creditPackage.getPriceInCents());
+        history.setPurchaseDate(LocalDateTime.now());
+        creditPurchaseHistoryRepository.save(history);
 
         return ResponseEntity.ok("Credits assigned successfully");
     }
