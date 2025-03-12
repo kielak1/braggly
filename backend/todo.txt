@@ -3,12 +3,14 @@ przy tworzeniu rekordu przy logowaniu przez google nie tworzy sie rekord UserCre
 
 
 dodac funkcje i endpoint 
- - zwiekszenie balansu uzytkownika o pakiet
- - odliczenie zuxytych kredytow uzytkownikowi
+ - pobieranie swojego balansu (byc moze w whpo am i)
+ - obcizaenie kredytani z tytulu innego niz time
+ - administracja uzytkownikami
+   - korekta liczby kredytow
+   - usuniecie uzytkownika
+   - dodanie uzytkownika
 
-
-zastanowic sie czy nie zdefiniowac relacji w bazie
-
+ - platnosci przez atripe
 
 uzycie  SpringDoc OpenAPI
 
@@ -32,35 +34,5 @@ Należy zaimplementowć endpointy do:
    - historia zuycia dla zalogowanego uzytkownika
 
 zawsze poslugujemy sie groszami jako jednosta rozliczeniowa
-
-
-
-baza danych
--cenniki pakietów
--uzytkownik
-   -historia zakupow
-   -biezacy stan kredytów
-
-- Endpointy
-   - pobieranie aktualnych pakietów
-   - dodanie pakietu
-   - kasowanie pakietu
-   
-
-
-
-package com.example.backend.repository;
-
-import com.example.backend.model.*;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface CreditPackageRepository extends JpaRepository<CreditPackage, Long> {}
-
-public interface UserCreditsRepository extends JpaRepository<UserCredits, Long> {}
-
-public interface CreditPurchaseHistoryRepository extends JpaRepository<CreditPurchaseHistory, Long> {}
-
-public interface CreditUsageHistoryRepository extends JpaRepository<CreditUsageHistory, Long> {}
-
 
 
