@@ -1,45 +1,78 @@
 #!/bin/bash
 
-
-
 # Ustawienia
-
-BASE_URL="https://braggly-production.up.railway.app"
-
+BASE_URL="https://bragglybackend.kielak.com"
 USERNAME="admin"
-
 PASSWORD="admin"
 
-
-
 # 1. Pobranie tokena
-
-TOKEN=$(curl -s -X POST "$BASE_URL/api/auth/login"  -H "Content-Type: application/json"  -d "{\"username\": \"$USERNAME\", \"password\": \"$PASSWORD\"}" | jq -r '.token')
-
-
-
-# Sprawdzenie czy token został pobrany
+TOKEN=$(curl -s -X POST "$BASE_URL/api/auth/login" \
+  -H "Content-Type: application/json" \
+  -d "{\"username\": \"$USERNAME\", \"password\": \"$PASSWORD\"}" | jq -r '.token')
 
 if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
-
     echo "❌ Błąd: Nie udało się pobrać tokena!"
-
     exit 1
-
 fi
-
-
 
 echo "✅ Token pobrany: $TOKEN"
 
-
-
-# 2. Użycie tokena do wywołania /api/hello
-
-RESPONSE=$(curl -s -X GET "$BASE_URL/api/hello"    -H "Authorization: Bearer $TOKEN")
-
-
-
+# 2. Wywołanie /api/hello
+RESPONSE=$(curl -s -X GET "$BASE_URL/api/hello" -H "Authorization: Bearer $TOKEN")
 echo "🔍 Odpowiedź z /api/hello: $RESPONSE"
 
+# 3. Dodanie pakietu kredytowego
+NEW_PACKAGE='{"credits": 5, "priceInCents": 45}'
+RESPONSE=$(curl -s -X POST "$BASE_URL/credits/packages"  -H "Authorization: Bearer $TOKEN"  -H "Content-Type: application/json"  -d "$NEW_PACKAGE")
+echo "🆕 Odpowiedź z dodania pakietu: $RESPONSE"
 
+# 4. Pobranie ID pierwszego pakietu
+PACKAGE_ID=$(curl -s -X GET "$BASE_URL/credits/packages" -H "Authorization: Bearer $TOKEN" | jq -r '.[0].id')
+if [ "$PACKAGE_ID" == "null" ] || [ -z "$PACKAGE_ID" ]; then
+    echo "❌ Błąd: Nie udało się pobrać ID pakietu!"
+    exit 1
+fi
+echo "📌 Zapamiętany ID pakietu: $PACKAGE_ID"
+
+# 5. Usunięcie pakietu kredytowego
+RESPONSE=$(curl -s -X DELETE "$BASE_URL/credits/packages/$PACKAGE_ID" -H "Authorization: Bearer $TOKEN")
+echo "🗑️ Odpowiedź z usunięcia pakietu: $RESPONSE"
+
+# 6. Ponowne pobranie listy pakietów
+RESPONSE=$(curl -s -X GET "$BASE_URL/credits/packages" -H "Authorization: Bearer $TOKEN")
+echo "🔍 Odpowiedź z /credits/packages po usunięciu: $RESPONSE"
+
+# 7. Pobranie listy użytkowników
+USER_LIST=$(curl -s -X GET "$BASE_URL/api/admin/list-user" -H "Authorization: Bearer $TOKEN")
+echo "🔍 Odpowiedź z /api/list-user: $USER_LIST"
+
+# 8. Pobranie ID pierwszego użytkownika
+USER_ID=$(echo "$USER_LIST" | jq -r '.[1].id')
+if [ "$USER_ID" == "null" ] || [ -z "$USER_ID" ]; then
+    echo "❌ Błąd: Nie udało się pobrać ID użytkownika!"
+    exit 1
+fi
+echo "📌 Zapamiętane ID użytkownika: $USER_ID"
+
+# 9. Pobranie ID pakietu do przypisania
+PACKAGE_ID=$(curl -s -X GET "$BASE_URL/credits/packages" -H "Authorization: Bearer $TOKEN" | jq -r '.[0].id')
+if [ "$PACKAGE_ID" == "null" ] || [ -z "$PACKAGE_ID" ]; then
+    echo "❌ Błąd: Nie udało się pobrać ID pakietu!"
+    exit 1
+fi
+echo "📌 Pakiet ID: $PACKAGE_ID zostanie przypisany użytkownikowi $USER_ID"
+
+# 10. Przypisanie kredytów użytkownikowi
+RESPONSE=$(curl -s -X POST "$BASE_URL/credits/assign" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data "userId=$USER_ID&packageId=$PACKAGE_ID")
+echo "🎯 Odpowiedź z przypisania kredytów: $RESPONSE"
+
+# 11. Pobranie historii zakupów kredytowych
+PURCHASE_HISTORY=$(curl -s -X GET "$BASE_URL/credits/purchase-history?userId=$USER_ID" -H "Authorization: Bearer $TOKEN")
+echo "📜 Historia zakupów użytkownika ($USER_ID): $PURCHASE_HISTORY"
+
+# 12. Pobranie historii użycia kredytów
+USAGE_HISTORY=$(curl -s -X GET "$BASE_URL/credits/usage-history?userId=$USER_ID" -H "Authorization: Bearer $TOKEN")
+echo "📜 Historia użycia kredytów użytkownika ($USER_ID): $USAGE_HISTORY"
