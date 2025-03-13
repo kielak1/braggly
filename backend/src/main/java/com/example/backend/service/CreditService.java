@@ -73,7 +73,7 @@ public class CreditService {
         }
 
         userCredits.setBalance(userCredits.getBalance() - creditsUsed);
-        userCreditsRepository.save(userCredits);
+        userCredits.setLastUpdated(LocalDateTime.now());    
 
         CreditUsageHistory usageHistory = new CreditUsageHistory();
         usageHistory.setUserId(userId);
