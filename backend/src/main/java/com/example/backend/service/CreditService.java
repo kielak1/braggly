@@ -73,7 +73,7 @@ public class CreditService {
         }
 
         userCredits.setBalance(userCredits.getBalance() - creditsUsed);
-        userCredits.setLastUpdated(LocalDateTime.now());    
+        userCredits.setLastUpdated(LocalDateTime.now());
 
         CreditUsageHistory usageHistory = new CreditUsageHistory();
         usageHistory.setUserId(userId);
@@ -125,6 +125,9 @@ public class CreditService {
                 int newBalance = userCredits.getBalance() - (int) daysBetween;
                 userCredits.setBalance(Math.max(newBalance, 0));
                 userCredits.setLastUpdated(LocalDateTime.now());
+
+                // Zapis zmian do bazy
+                userCreditsRepository.save(userCredits);
             }
         }
     }
