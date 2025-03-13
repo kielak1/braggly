@@ -116,41 +116,44 @@ public class CreditService {
         return ResponseEntity.ok("Credits assigned successfully");
     }
 
-    private void updateUserCreditsBalance(UserCredits userCredits) {
+    @Transactional
+    public void updateUserCreditsBalance(UserCredits userCredits) {
         if (userCredits.getLastUpdated() != null) {
             LocalDate lastUpdatedDate = userCredits.getLastUpdated().toLocalDate();
             LocalDate today = LocalDate.now();
             long daysBetween = ChronoUnit.DAYS.between(lastUpdatedDate, today);
-    
+
             // Logowanie wartości daysBetween
-            logger.info("User ID: {}, daysBetween: {}, lastUpdatedDate: {}, today: {}, currentBalance: {}",
-                    userCredits.getUserId(), daysBetween, lastUpdatedDate, today, userCredits.getBalance());
-    
+            // logger.info("User ID: {}, daysBetween: {}, lastUpdatedDate: {}, today: {}, currentBalance: {}",
+            //         userCredits.getUserId(), daysBetween, lastUpdatedDate, today, userCredits.getBalance());
+
             if (daysBetween > 0) {
                 // Pobieramy balans przed odjęciem kredytów
                 int currentBalance = userCredits.getBalance();
-    
+
                 // Kredyty, które użytkownik faktycznie straci
                 int creditsUsed = (int) Math.min(daysBetween, currentBalance);
-                
+
                 // Odejmujemy kredyty za pomocą useCredits()
                 useCredits(userCredits.getUserId(), "time", creditsUsed);
-    
+
                 // Aktualizujemy saldo (unikamy podwójnego odejmowania)
                 int newBalance = Math.max(currentBalance - (int) daysBetween, 0);
                 userCredits.setBalance(newBalance);
                 userCredits.setLastUpdated(LocalDateTime.now());
-    
+
                 // Zapis do bazy
                 userCreditsRepository.save(userCredits);
-    
+
                 // Logowanie nowego balansu
-                // logger.info("User ID: {}, creditsUsed: {}, previousBalance: {}, newBalance: {}, lastUpdated updated to: {}",
-                //         userCredits.getUserId(), creditsUsed, currentBalance, newBalance, userCredits.getLastUpdated());
+                // logger.info("User ID: {}, creditsUsed: {}, previousBalance: {}, newBalance:
+                // {}, lastUpdated updated to: {}",
+                // userCredits.getUserId(), creditsUsed, currentBalance, newBalance,
+                // userCredits.getLastUpdated());
             }
         }
     }
-    
+
     @Transactional
     public void deleteCreditPackage(Long id) {
         if (!creditPackageRepository.existsById(id)) {
