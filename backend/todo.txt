@@ -1,6 +1,6 @@
 
 dodac funkcje i endpoint 
- - pobieranie swojego balansu (byc moze w whpo am i)
+ - pobieranie swojego balansu (byc moze w whpo am i)  - endpoint porawiuonuy
  - obcizaenie kredytani z tytulu innego niz time
  - administracja uzytkownikami
    - korekta liczby kredytow

@@ -3,16 +3,23 @@ package com.example.backend.controller;
 import com.example.backend.model.User;
 import com.example.backend.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+
 import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Tag(name = "Admin Controller", description = "Zarządzanie użytkownikami w systemie")
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -24,6 +31,10 @@ public class AdminController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Tworzy nowego użytkownika", description = "Endpoint dostępny tylko dla administratorów.")
+    @ApiResponse(responseCode = "200", description = "Pomyślnie utworzono użytkownika")
+    @ApiResponse(responseCode = "400", description = "Brak nazwy użytkownika lub hasła", content = @Content)
+    @ApiResponse(responseCode = "403", description = "Brak uprawnień do utworzenia użytkownika", content = @Content)
     @PostMapping("/create-user")
     public ResponseEntity<String> createUser(@RequestBody Map<String, String> userData, Authentication authentication) {
         String username = userData.get("username");
@@ -36,21 +47,25 @@ public class AdminController {
         User user = (User) authentication.getPrincipal();
         String role = user.getRole().name();
 
-        if (role != "ADMIN") {
-            return ResponseEntity.badRequest().body("Brak uprawnień.");
+        if (!role.equals("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień.");
         }
 
         userService.createUser(username, password, User.Role.USER);
         return ResponseEntity.ok("User created successfully.");
     }
 
+    @Operation(summary = "Usuwa użytkownika", description = "Endpoint dostępny tylko dla administratorów. Wymaga podania nazwy użytkownika do usunięcia.")
+    @ApiResponse(responseCode = "200", description = "Pomyślnie usunięto użytkownika")
+    @ApiResponse(responseCode = "400", description = "Użytkownik nie znaleziony", content = @Content)
+    @ApiResponse(responseCode = "403", description = "Brak uprawnień do usunięcia użytkownika", content = @Content)
     @DeleteMapping("/delete-user")
     public ResponseEntity<String> deleteUser(@RequestParam String username, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         String role = user.getRole().name();
 
-        if (role != "ADMIN") {
-            return ResponseEntity.badRequest().body("Brak uprawnień.");
+        if (!role.equals("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień.");
         }
         boolean deleted = userService.deleteUser(username);
         if (deleted) {
@@ -60,19 +75,20 @@ public class AdminController {
         }
     }
 
+    @Operation(summary = "Pobiera listę użytkowników", description = "Zwraca listę wszystkich użytkowników wraz z ich rolami. Dostępne tylko dla administratorów.")
+    @ApiResponse(responseCode = "200", description = "Lista użytkowników zwrócona pomyślnie")
+    @ApiResponse(responseCode = "403", description = "Brak uprawnień do wyświetlenia listy użytkowników", content = @Content)
     @GetMapping("/list-user")
     public ResponseEntity<List<Map<String, String>>> listUsers(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        // logger.info("User {} is attempting to list all users", user.getUsername());
         if (!user.getRole().name().equals("ADMIN")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<User> users = userService.getAllUsers();
-        // logger.info("Users = {} ", users);
         List<Map<String, String>> userList = users.stream()
                 .map(u -> Map.of(
-                        "id", String.valueOf(u.getId()), // Zamiana Long na String
+                        "id", String.valueOf(u.getId()),
                         "username", u.getUsername(),
                         "role", u.getRole().name()))
                 .collect(Collectors.toList());
