@@ -145,8 +145,8 @@ public class CreditService {
                 userCreditsRepository.save(userCredits);
     
                 // Logowanie nowego balansu
-                logger.info("User ID: {}, creditsUsed: {}, previousBalance: {}, newBalance: {}, lastUpdated updated to: {}",
-                        userCredits.getUserId(), creditsUsed, currentBalance, newBalance, userCredits.getLastUpdated());
+                // logger.info("User ID: {}, creditsUsed: {}, previousBalance: {}, newBalance: {}, lastUpdated updated to: {}",
+                //         userCredits.getUserId(), creditsUsed, currentBalance, newBalance, userCredits.getLastUpdated());
             }
         }
     }
