@@ -6,13 +6,14 @@ import com.example.backend.repository.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import org.springframework.http.HttpStatus;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class CreditService {
@@ -21,6 +22,7 @@ public class CreditService {
     private final UserCreditsRepository userCreditsRepository;
     private final CreditPurchaseHistoryRepository creditPurchaseHistoryRepository;
     private final CreditUsageHistoryRepository creditUsageHistoryRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CreditService.class);
 
     public CreditService(UserRepository userRepository,
             CreditPackageRepository creditPackageRepository,
@@ -119,19 +121,36 @@ public class CreditService {
             LocalDate lastUpdatedDate = userCredits.getLastUpdated().toLocalDate();
             LocalDate today = LocalDate.now();
             long daysBetween = ChronoUnit.DAYS.between(lastUpdatedDate, today);
+    
+            // Logowanie wartości daysBetween
+            logger.info("User ID: {}, daysBetween: {}, lastUpdatedDate: {}, today: {}, currentBalance: {}",
+                    userCredits.getUserId(), daysBetween, lastUpdatedDate, today, userCredits.getBalance());
+    
             if (daysBetween > 0) {
-                int creditsUsed = (int) Math.min(daysBetween, userCredits.getBalance());
+                // Pobieramy balans przed odjęciem kredytów
+                int currentBalance = userCredits.getBalance();
+    
+                // Kredyty, które użytkownik faktycznie straci
+                int creditsUsed = (int) Math.min(daysBetween, currentBalance);
+                
+                // Odejmujemy kredyty za pomocą useCredits()
                 useCredits(userCredits.getUserId(), "time", creditsUsed);
-                int newBalance = userCredits.getBalance() - (int) daysBetween;
-                userCredits.setBalance(Math.max(newBalance, 0));
+    
+                // Aktualizujemy saldo (unikamy podwójnego odejmowania)
+                int newBalance = Math.max(currentBalance - (int) daysBetween, 0);
+                userCredits.setBalance(newBalance);
                 userCredits.setLastUpdated(LocalDateTime.now());
-
-                // Zapis zmian do bazy
+    
+                // Zapis do bazy
                 userCreditsRepository.save(userCredits);
+    
+                // Logowanie nowego balansu
+                logger.info("User ID: {}, creditsUsed: {}, previousBalance: {}, newBalance: {}, lastUpdated updated to: {}",
+                        userCredits.getUserId(), creditsUsed, currentBalance, newBalance, userCredits.getLastUpdated());
             }
         }
     }
-
+    
     @Transactional
     public void deleteCreditPackage(Long id) {
         if (!creditPackageRepository.existsById(id)) {
