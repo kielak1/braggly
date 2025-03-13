@@ -124,6 +124,7 @@ public class CreditService {
                 useCredits(userCredits.getUserId(), "time", creditsUsed);
                 int newBalance = userCredits.getBalance() - (int) daysBetween;
                 userCredits.setBalance(Math.max(newBalance, 0));
+                userCredits.setLastUpdated(LocalDateTime.now());
             }
         }
     }
