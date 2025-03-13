@@ -6,7 +6,7 @@ import com.example.backend.security.JwtUtil;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +58,7 @@ public class AuthController {
         try {
             // Weryfikator tokena Google
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(), JacksonFactory.getDefaultInstance())
+                    new NetHttpTransport(), GsonFactory.getDefaultInstance())
                     .setAudience(Collections
                             .singletonList("572801009620-baem7okp3f4ij8rv460l8t76evom0h5o.apps.googleusercontent.com")) // <--
                                                                                                                         // Twój
