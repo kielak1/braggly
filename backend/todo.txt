@@ -1,6 +1,3 @@
-przy tworzeniu rekordu przy logowaniu przez google nie tworzy sie rekord UserCredits
-
-
 
 dodac funkcje i endpoint 
  - pobieranie swojego balansu (byc moze w whpo am i)
@@ -13,7 +10,7 @@ dodac funkcje i endpoint
  - platnosci przez atripe
 
 uzycie  SpringDoc OpenAPI
-
+    - na dev dziala a na prod probuje uzyc http zamiast https i cors blokuje
 
 
 Rozbuduj bazę danych przesłanego projektu o struktury które będą wykorzystywane do rozliczania użytkowników z korzystania z systemu.
