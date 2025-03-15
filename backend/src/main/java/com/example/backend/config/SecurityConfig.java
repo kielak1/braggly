@@ -64,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4000", "https://braggly.kielak.com", "http://aprobo.kielak.com:4000"));
+        config.setAllowedOrigins(List.of("http://localhost:4000", "https://braggly.kielak.com", "http://aprobo.kielak.com:4000", "https://bragglydev.kielak.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setAllowCredentials(true); // Obsługa sesji i ciasteczek
