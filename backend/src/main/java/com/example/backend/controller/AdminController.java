@@ -15,13 +15,15 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Optional;
 
-import org.springframework.security.core.context.SecurityContextHolder;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Tag(name = "Admin Controller", description = "Zarządzanie użytkownikami w systemie")
 @RestController
@@ -30,9 +32,11 @@ public class AdminController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Operation(summary = "Tworzy nowego użytkownika", description = "Endpoint dostępny tylko dla administratorów.")
@@ -101,6 +105,59 @@ public class AdminController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(userList);
+    }
+
+    @Operation(summary = "Zmienia rolę użytkownika", description = "Pozwala administratorowi zmienić rolę użytkownika na ADMIN lub USER")
+    @ApiResponse(responseCode = "200", description = "Rola użytkownika została zmieniona")
+    @ApiResponse(responseCode = "403", description = "Brak uprawnień")
+    @ApiResponse(responseCode = "404", description = "Użytkownik nie znaleziony")
+    @PutMapping("/set-role")
+    public ResponseEntity<String> setUserRole(
+            @RequestParam Long userId,
+            @RequestParam String role,
+            Authentication authentication) {
+
+        User currentUser = (User) authentication.getPrincipal();
+        if (!currentUser.getRole().equals(User.Role.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień");
+        }
+
+        Optional<User> userOptional = userService.getUserById(userId);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie znaleziony");
+        }
+
+        try {
+            User.Role newRole = User.Role.valueOf(role.toUpperCase());
+            userService.updateUserRole(userId, newRole);
+            return ResponseEntity.ok("Rola użytkownika zmieniona na: " + newRole);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Niepoprawna rola: " + role);
+        }
+    }
+
+    @Operation(summary = "Zmienia hasło użytkownika", description = "Pozwala administratorowi zmienić hasło użytkownika")
+    @ApiResponse(responseCode = "200", description = "Hasło zostało zmienione")
+    @ApiResponse(responseCode = "403", description = "Brak uprawnień")
+    @ApiResponse(responseCode = "404", description = "Użytkownik nie znaleziony")
+    @PutMapping("/set-password")
+    public ResponseEntity<String> setUserPassword(
+            @RequestParam Long userId,
+            @RequestParam String newPassword,
+            Authentication authentication) {
+
+        User currentUser = (User) authentication.getPrincipal();
+        if (!currentUser.getRole().equals(User.Role.ADMIN)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Brak uprawnień");
+        }
+
+        Optional<User> userOptional = userService.getUserById(userId);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie znaleziony");
+        }
+
+        userService.updateUserPassword(userId, newPassword);
+        return ResponseEntity.ok("Hasło użytkownika zostało zmienione");
     }
 
 }
