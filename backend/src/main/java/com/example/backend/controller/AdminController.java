@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 import java.util.Map;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Tag(name = "Admin Controller", description = "Zarządzanie użytkownikami w systemie")
 @RestController
@@ -75,23 +79,28 @@ public class AdminController {
         }
     }
 
-    @Operation(summary = "Pobiera listę użytkowników", description = "Zwraca listę wszystkich użytkowników wraz z ich rolami. Dostępne tylko dla administratorów.")
+    @Operation(summary = "Pobiera listę użytkowników", description = "Zwraca listę wszystkich użytkowników wraz z ich rolami oraz saldem kredytowym. Dostępne tylko dla administratorów.")
     @ApiResponse(responseCode = "200", description = "Lista użytkowników zwrócona pomyślnie")
     @ApiResponse(responseCode = "403", description = "Brak uprawnień do wyświetlenia listy użytkowników", content = @Content)
     @GetMapping("/list-user")
-    public ResponseEntity<List<Map<String, String>>> listUsers(Authentication authentication) {
+    public ResponseEntity<List<Map<String, Object>>> listUsers(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        if (!user.getRole().name().equals("ADMIN")) {
+        if (user.getRole() != User.Role.ADMIN) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         List<User> users = userService.getAllUsers();
-        List<Map<String, String>> userList = users.stream()
-                .map(u -> Map.of(
-                        "id", String.valueOf(u.getId()),
-                        "username", u.getUsername(),
-                        "role", u.getRole().name()))
-                .collect(Collectors.toList());
+        List<Map<String, Object>> userList = users.stream().map(u -> {
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", u.getId()); // Long
+            userData.put("username", u.getUsername()); // String
+            userData.put("role", u.getRole().name()); // String
+            userData.put("balance", u.getUserCredits() != null ? u.getUserCredits().getBalance() : 0); // Integer
+
+            return userData;
+        }).collect(Collectors.toList());
+
         return ResponseEntity.ok(userList);
     }
+
 }
