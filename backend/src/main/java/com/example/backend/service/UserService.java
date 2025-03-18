@@ -5,6 +5,7 @@ import com.example.backend.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +38,24 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    public void updateUserRole(Long userId, User.Role newRole) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setRole(newRole);
+            userRepository.save(user);
+        });
+    }
+
+    public void updateUserPassword(Long userId, String newPassword) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        });
+    }
+
     @PostConstruct
     public void initAdminUser() {
         if (userRepository.findByUsername("admin").isEmpty()) {
@@ -49,5 +68,4 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
 }
