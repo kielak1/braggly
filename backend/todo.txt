@@ -1,19 +1,14 @@
 
 modwyfikacje API
 
- - admin/list-user -  dodac saldo
-- admin/set-pass - usatwienie hasla dla usera id
-- admin/set-role - ustawienie roli dla usera
+
 - 
 
 
 dodac funkcje i endpoint 
  - pobieranie swojego balansu (byc moze w whpo am i)  - endpoint porawiuonuy
  - obcizaenie kredytani z tytulu innego niz time
- - administracja uzytkownikami
-   - korekta liczby kredytow
-   - usuniecie uzytkownika
-   - dodanie uzytkownika
+
 
  - platnosci przez atripe
 
