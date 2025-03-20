@@ -49,17 +49,19 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Wyłącza CSRF dla REST API
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT = Stateless
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/docs").permitAll() // 🔥 Swagger dostępny dla zalogowanych użytkowników
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/docs").permitAll() // 🔥 Swagger
                 .requestMatchers("/api/auth/**").permitAll() // 🔓 Publiczne endpointy do logowania
+                .requestMatchers("/api/payments/webhook").permitAll() // ✅ Webhook Stripe dostępny publicznie
                 .requestMatchers("/api/hello").authenticated() // 📌 API wymaga autoryzacji
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT Security
             .cors(cors -> cors.configurationSource(corsConfigurationSource())); // 🔥 CORS
-
+    
         return http.build();
     }
-
+     
+    
     // 🔥 Konfiguracja CORS
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
