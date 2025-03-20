@@ -66,6 +66,8 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
+    // implementation 'com.stripe:stripe-java:24.1.0'
+    implementation 'com.stripe:stripe-java:24.5.0' // Przykład najnowszej wersji na październik 2023
 }
 
 tasks.named('test') {
