@@ -23,30 +23,30 @@ public class PaymentController {
     private String stripeSecretKey;
 
     @Value("${stripe.webhook.secret}")
-    private String stripeWebhookSecret; // 🔹 Klucz webhooka
+    private String stripeWebhookSecret;
 
     private final CreditService creditService;
 
     public PaymentController(CreditService creditService) {
         this.creditService = creditService;
+        Stripe.apiKey = stripeSecretKey;         // Ustawienie klucza API raz
+    //    Stripe.apiVersion = "2025-02-24.acacia"; // Ustawienie wersji API raz
     }
 
     // ✅ Tworzenie PaymentIntent
     @PostMapping("/create-payment-intent")
     public ResponseEntity<Map<String, String>> createPaymentIntent(@RequestBody Map<String, Object> request) {
-        Stripe.apiKey = stripeSecretKey;
-
         try {
-            String username = (String) request.get("username"); // Pobranie username
+            String username = (String) request.get("username");
             if (username == null || username.isEmpty()) {
-                username = "unknown_user"; // Domyślna wartość, gdyby username nie był podany
+                username = "unknown_user";
             }
 
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount((Long) request.get("amount")) // Kwota w groszach (np. 1000 = 10 PLN)
+                    .setAmount((Long) request.get("amount"))
                     .setCurrency("pln")
                     .addPaymentMethodType("card")
-                    .putMetadata("username", username) // <-- Dodajemy username do metadata
+                    .putMetadata("username", username)
                     .build();
 
             PaymentIntent paymentIntent = PaymentIntent.create(params);
@@ -69,7 +69,7 @@ public class PaymentController {
             // Weryfikacja podpisu webhooka
             Event event = Webhook.constructEvent(payload, sigHeader, stripeWebhookSecret);
 
-            System.out.println("🔹 Pełna treść webhooka: " + payload); // 🔥 Pełne logowanie webhooka!
+            System.out.println("🔹 Pełna treść webhooka: " + payload);
             System.out.println("🔹 Typ zdarzenia: " + event.getType());
             if ("payment_intent.succeeded".equals(event.getType())) {
                 System.out.println("🔹 Płatność zakończona powodzeniem");
@@ -78,10 +78,10 @@ public class PaymentController {
                         .orElse(null);
 
                 if (paymentIntent != null) {
-                    System.out.println("🔹 paymentIntent != nul");
+                    System.out.println("🔹 paymentIntent != null"); // Poprawiono literówkę
                     String paymentId = paymentIntent.getId();
-                    String username = paymentIntent.getMetadata().get("username"); // Pobranie username
-                    Long amountPaid = paymentIntent.getAmount(); // Pobranie kwoty
+                    String username = paymentIntent.getMetadata().get("username");
+                    Long amountPaid = paymentIntent.getAmount();
 
                     System.out.println("🔹 PaymentIntent ID: " + paymentId);
                     System.out.println("🔹 Kwota zapłacona: " + amountPaid + " groszy (PLN)");
@@ -94,6 +94,8 @@ public class PaymentController {
                     } else {
                         System.out.println("⚠️ Brak username w metadanych – nie można dodać tokenów.");
                     }
+                } else {
+                    System.out.println("❌ paymentIntent jest null"); // Dodano log dla debugowania
                 }
             }
 
