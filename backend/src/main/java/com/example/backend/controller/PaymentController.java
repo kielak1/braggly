@@ -37,14 +37,16 @@ public class PaymentController {
         Stripe.apiKey = stripeSecretKey;
 
         try {
-            String userEmail = (String) request.get("email"); // Pobranie e-maila użytkownika
-            Long amount = ((Number) request.get("amount")).longValue(); // Poprawna obsługa konwersji
+            String username = (String) request.get("username"); // Pobranie username
+            if (username == null || username.isEmpty()) {
+                username = "unknown_user"; // Domyślna wartość, gdyby username nie był podany
+            }
 
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(amount) // Kwota w groszach (np. 1000 = 10 PLN)
+                    .setAmount((Long) request.get("amount")) // Kwota w groszach (np. 1000 = 10 PLN)
                     .setCurrency("pln")
                     .addPaymentMethodType("card")
-                    .putMetadata("email", userEmail) // Przekazanie e-maila w metadanych
+                    .putMetadata("username", username) // <-- Dodajemy username do metadata
                     .build();
 
             PaymentIntent paymentIntent = PaymentIntent.create(params);
@@ -55,8 +57,7 @@ public class PaymentController {
             return ResponseEntity.ok(response);
 
         } catch (StripeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "⚠️ Stripe error: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -69,13 +70,15 @@ public class PaymentController {
             Event event = Webhook.constructEvent(payload, sigHeader, stripeWebhookSecret);
 
             System.out.println("🔹 Pełna treść webhooka: " + payload); // 🔥 Pełne logowanie webhooka!
-
+            System.out.println("🔹 Typ zdarzenia: " + event.getType());
             if ("payment_intent.succeeded".equals(event.getType())) {
+                System.out.println("🔹 Płatność zakończona powodzeniem");
                 PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
                         .getObject()
                         .orElse(null);
 
                 if (paymentIntent != null) {
+                    System.out.println("🔹 paymentIntent != nul");
                     String paymentId = paymentIntent.getId();
                     String username = paymentIntent.getMetadata().get("username"); // Pobranie username
                     Long amountPaid = paymentIntent.getAmount(); // Pobranie kwoty
@@ -85,7 +88,7 @@ public class PaymentController {
                     System.out.println("🔹 Użytkownik: " + username);
 
                     if (username != null) {
-                    //    creditService.addCreditsToUser(username, 10);
+                        // creditService.addCreditsToUser(username, 10);
                         System.out.println(
                                 "✅ Płatność zakończona sukcesem! ID: " + paymentId + ", Użytkownik: " + username);
                     } else {
