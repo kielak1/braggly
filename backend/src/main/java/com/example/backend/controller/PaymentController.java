@@ -69,26 +69,31 @@ public class PaymentController {
             // Weryfikacja podpisu webhooka
             Event event = Webhook.constructEvent(payload, sigHeader, stripeWebhookSecret);
 
-            System.out.println("🔹 Pełna treść webhooka: " + payload);
+        //    System.out.println("🔹 Pełna treść webhooka: " + payload);
             System.out.println("🔹 Typ zdarzenia: " + event.getType());
             if ("payment_intent.succeeded".equals(event.getType())) {
-                System.out.println("🔹 Płatność zakończona powodzeniem");
+         //       System.out.println("🔹 Płatność zakończona powodzeniem");
                 PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
                         .getObject()
                         .orElse(null);
 
                 if (paymentIntent != null) {
-                    System.out.println("🔹 paymentIntent != null"); // Poprawiono literówkę
+                 //   System.out.println("🔹 paymentIntent != null"); // Poprawiono literówkę
                     String paymentId = paymentIntent.getId();
                     String username = paymentIntent.getMetadata().get("username");
                     Long amountPaid = paymentIntent.getAmount();
+                    Long packageId = Long.parseLong(paymentIntent.getMetadata().get("package_id"));
+                    Long userId = Long.parseLong(paymentIntent.getMetadata().get("user_id"));
 
                     System.out.println("🔹 PaymentIntent ID: " + paymentId);
                     System.out.println("🔹 Kwota zapłacona: " + amountPaid + " groszy (PLN)");
                     System.out.println("🔹 Użytkownik: " + username);
+                    System.out.println("🔹 User ID: " + userId);
+                    System.out.println("🔹 Package ID: " + packageId);
 
                     if (username != null) {
                         // creditService.addCreditsToUser(username, 10);
+                        creditService.assignCredits( userId,  packageId);
                         System.out.println(
                                 "✅ Płatność zakończona sukcesem! ID: " + paymentId + ", Użytkownik: " + username);
                     } else {
