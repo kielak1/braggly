@@ -42,6 +42,8 @@ public class CreditService {
 
     @Transactional
     public void purchaseCredits(Long userId, Long packageId) {
+        // purchaseCredits bezpośrednio dodaje kredyty do salda użytkownika
+        // i zapisuje historię zakupu.
         CreditPackage creditPackage = creditPackageRepository.findById(packageId)
                 .orElseThrow(() -> new RuntimeException("Credit package not found"));
 
@@ -67,6 +69,10 @@ public class CreditService {
 
     @Transactional
     public void useCredits(Long userId, String usageType, int creditsUsed) {
+        if (creditsUsed == 0) {
+            return;
+        }
+
         UserCredits userCredits = userCreditsRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -100,7 +106,8 @@ public class CreditService {
 
     @Transactional
     public ResponseEntity<?> assignCredits(Long userId, Long packageId) {
-        // Sprawdzamy i aktualizujemy userCredits (jeśli lastUpdated jest starsze)
+        // assignCredits najpierw sprawdza i aktualizuje saldo kredytów użytkownika
+        // jeśli data lastUpdated jest starsza, a następnie wywołuje purchaseCredits, aby dodać kredyty.
         UserCredits userCredits = userCreditsRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserCredits newCredits = new UserCredits();
