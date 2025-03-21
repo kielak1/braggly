@@ -67,7 +67,8 @@ dependencies {
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
     // implementation 'com.stripe:stripe-java:24.1.0'
-    implementation 'com.stripe:stripe-java:24.5.0' // Przykład najnowszej wersji na październik 2023
+    //implementation 'com.stripe:stripe-java:24.5.0' // Przykład najnowszej wersji na październik 2023
+    implementation 'com.stripe:stripe-java:28.4.0'
 }
 
 tasks.named('test') {
