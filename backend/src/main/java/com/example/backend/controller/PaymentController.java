@@ -72,7 +72,7 @@ public class PaymentController {
         //    System.out.println("🔹 Pełna treść webhooka: " + payload);
             System.out.println("🔹 Typ zdarzenia: " + event.getType());
             if ("payment_intent.succeeded".equals(event.getType())) {
-         //       System.out.println("🔹 Płatność zakończona powodzeniem");
+                System.out.println("🔹 Płatność zakończona powodzeniem");
                 PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
                         .getObject()
                         .orElse(null);
