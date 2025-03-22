@@ -2,7 +2,7 @@
 modwyfikacje API
 
 
-- 
+- wersja javy - moze sprobowac zwiekszyc do maksymalnej wspieranej na railway
 
 
 dodac funkcje i endpoint 
