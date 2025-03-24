@@ -41,7 +41,7 @@ public class CreditService {
     }
 
     @Transactional
-    public void purchaseCredits(Long userId, Long packageId) {
+    public void purchaseCredits(Long userId, Long packageId, String paymentId) {
         // purchaseCredits bezpośrednio dodaje kredyty do salda użytkownika
         // i zapisuje historię zakupu.
         CreditPackage creditPackage = creditPackageRepository.findById(packageId)
@@ -64,6 +64,9 @@ public class CreditService {
         history.setCreditsPurchased(creditPackage.getCredits());
         history.setAmountPaid(creditPackage.getPriceInCents());
         history.setPurchaseDate(LocalDateTime.now());
+
+        history.setPaymentId(paymentId);
+
         creditPurchaseHistoryRepository.save(history);
     }
 
@@ -105,9 +108,10 @@ public class CreditService {
     }
 
     @Transactional
-    public ResponseEntity<?> assignCredits(Long userId, Long packageId) {
+    public ResponseEntity<?> assignCredits(Long userId, Long packageId, String paymentId) {
         // assignCredits najpierw sprawdza i aktualizuje saldo kredytów użytkownika
-        // jeśli data lastUpdated jest starsza, a następnie wywołuje purchaseCredits, aby dodać kredyty.
+        // jeśli data lastUpdated jest starsza, a następnie wywołuje purchaseCredits,
+        // aby dodać kredyty.
         UserCredits userCredits = userCreditsRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserCredits newCredits = new UserCredits();
@@ -119,7 +123,7 @@ public class CreditService {
         updateUserCreditsBalance(userCredits);
 
         // Wywołujemy purchaseCredits, aby uniknąć duplikacji logiki
-        purchaseCredits(userId, packageId);
+        purchaseCredits(userId, packageId, paymentId);
         return ResponseEntity.ok("Credits assigned successfully");
     }
 
@@ -131,8 +135,10 @@ public class CreditService {
             long daysBetween = ChronoUnit.DAYS.between(lastUpdatedDate, today);
 
             // Logowanie wartości daysBetween
-            // logger.info("User ID: {}, daysBetween: {}, lastUpdatedDate: {}, today: {}, currentBalance: {}",
-            //         userCredits.getUserId(), daysBetween, lastUpdatedDate, today, userCredits.getBalance());
+            // logger.info("User ID: {}, daysBetween: {}, lastUpdatedDate: {}, today: {},
+            // currentBalance: {}",
+            // userCredits.getUserId(), daysBetween, lastUpdatedDate, today,
+            // userCredits.getBalance());
 
             if (daysBetween > 0) {
                 // Pobieramy balans przed odjęciem kredytów

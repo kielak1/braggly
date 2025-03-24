@@ -93,7 +93,7 @@ public class PaymentController {
 
                     if (username != null) {
                         // creditService.addCreditsToUser(username, 10);
-                        creditService.assignCredits( userId,  packageId);
+                        creditService.assignCredits( userId,  packageId, paymentId);
                         System.out.println(
                                 "✅ Płatność zakończona sukcesem! ID: " + paymentId + ", Użytkownik: " + username);
                     } else {

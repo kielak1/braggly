@@ -28,4 +28,7 @@ public class CreditPurchaseHistory {
 
     @Schema(description = "Data i czas dokonania zakupu", example = "2024-03-13T14:30:00")
     private LocalDateTime purchaseDate;
+
+    @Schema(description = "Unikalny identyfikator płatności", example = "pay_123456789")
+    private String paymentId;
 }

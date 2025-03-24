@@ -78,7 +78,7 @@ public class CreditController {
     @PostMapping("/assign")
     public ResponseEntity<?> assignCredits(@RequestParam Long userId, @RequestParam Long packageId) {
         try {
-            creditService.assignCredits(userId, packageId);
+            creditService.assignCredits(userId, packageId, "");
             return ResponseEntity.ok("Credits assigned successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
