@@ -1,4 +1,5 @@
 spring.log
+logs/
 HELP.md
 .gradle
 build/
