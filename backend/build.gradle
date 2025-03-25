@@ -7,11 +7,6 @@ plugins {
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
 
 configurations {
     compileOnly {
@@ -63,6 +58,11 @@ dependencies {
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
     implementation 'com.stripe:stripe-java:28.4.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.named('test') {
