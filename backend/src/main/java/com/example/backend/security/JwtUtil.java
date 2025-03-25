@@ -9,14 +9,18 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Base64;
+import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class JwtUtil {
 
     // 🔹 Poprawnie wygenerowany klucz o długości 256 bitów (32 bajty)
-    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(
-            "ZmVqZHJzZmRrYXNqZmthc2prZnNhawxKbGFpbnNrc3ZqZmxzZGxqZm=="
-    ));
+    // Klucz służy do podpisywania i weryfikacji tokenów JWT, zapewniając ich integralność i autentyczność.
+    private final SecretKey SECRET_KEY;
+
+    public JwtUtil(@Value("${jwt.secret}") String secretBase64) {
+        this.SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretBase64));
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()

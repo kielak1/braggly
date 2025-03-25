@@ -1,6 +1,7 @@
 
 modwyfikacje API
 
+system refreshToken, żeby nie trzeba było logować się co godzinę - pełną konfigurację JwtFilter + JwtEntryPoint + SecurityConfig
 
 - wersja javy - moze sprobowac zwiekszyc do maksymalnej wspieranej na railway
 
