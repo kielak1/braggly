@@ -1,2 +1,4 @@
 Strpie.txt
-backend/logs/spring.log
+*.log
+logs/
+backend/logs/
