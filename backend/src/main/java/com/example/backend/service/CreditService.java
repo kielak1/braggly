@@ -95,13 +95,12 @@ public class CreditService {
     }
 
     public List<CreditPurchaseHistory> getPurchaseHistory(Long userId) {
-        return creditPurchaseHistoryRepository.findAll();
+        return creditPurchaseHistoryRepository.findByUserId(userId);
     }
-
+    
     public List<CreditUsageHistory> getUsageHistory(Long userId) {
-        return creditUsageHistoryRepository.findAll();
+        return creditUsageHistoryRepository.findByUserId(userId);
     }
-
     @Transactional
     public void addCreditPackage(CreditPackage creditPackage) {
         creditPackageRepository.save(creditPackage);
