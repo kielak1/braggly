@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/docs").permitAll() // 🔥 Swagger
                 .requestMatchers("/api/auth/**").permitAll() // 🔓 Publiczne endpointy do logowania
                 .requestMatchers("/api/payments/webhook").permitAll() // ✅ Webhook Stripe dostępny publicznie
+                .requestMatchers("/debug/**").permitAll()               
                 .requestMatchers("/api/hello").authenticated() // 📌 API wymaga autoryzacji
                 .anyRequest().authenticated()
             )
