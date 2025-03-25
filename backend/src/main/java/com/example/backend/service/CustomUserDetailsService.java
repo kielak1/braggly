@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

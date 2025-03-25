@@ -76,7 +76,6 @@ public class AuthController {
 
             GoogleIdToken.Payload payload = idToken.getPayload();
             String email = payload.getEmail();
-            String name = (String) payload.get("name");
 
             Optional<User> userOptional = userRepository.findByUsername(email);
             User user;
