@@ -6,17 +6,11 @@ Projekt Braggly Backend to aplikacja serwerowa napisana w Spring Boot, która do
 
 ## Dostępność
 
-System produkcyjny jes dostępny pod adresem: https://bragglybackend.kielak.com
+System produkcyjny jest dostępny pod adresem: https://bragglybackend.kielak.com
 
-## Endpointy
-
-### Autoryzacja
 
 
 ## Autorzy
 
 - Tadeusz Kielak - [GitHub](https://github.com/kielak1)
 
-## Licencja
-
-.....
