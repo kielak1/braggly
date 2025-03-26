@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -52,7 +53,16 @@ public class CloudStorageService {
                 .contentType(file.getContentType())
                 .build();
 
-        s3Client.putObject(request, software.amazon.awssdk.core.sync.RequestBody.fromInputStream(
+        s3Client.putObject(request, RequestBody.fromInputStream(
                 file.getInputStream(), file.getSize()));
+    }
+
+    public void deleteFile(String filename) {
+        DeleteObjectRequest request = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(filename)
+                .build();
+
+        s3Client.deleteObject(request);
     }
 }

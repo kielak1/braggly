@@ -1,14 +1,19 @@
+// src/main/java/com/example/backend/service/XrdFileService.java
 package com.example.backend.service;
 
+import com.example.backend.dto.XrdFileResponseDTO;
 import com.example.backend.model.User;
 import com.example.backend.model.XrdFile;
 import com.example.backend.repository.XrdFileRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class XrdFileService {
@@ -23,12 +28,9 @@ public class XrdFileService {
         this.cloudStorageService = cloudStorageService;
     }
 
-    public XrdFile saveUxdFile(MultipartFile file, String userFilename, boolean publicVisible, User user)
+    public XrdFile saveUxdFile(MultipartFile file, String userFilename, boolean isPublic, User user)
             throws IOException {
-
         String storedFilename = UUID.randomUUID() + ".raw";
-
-        // Wysyłka do Backblaze B2 przez CloudStorageService
         cloudStorageService.uploadFile(storedFilename, file);
 
         logger.info("Wysłano plik do B2: " + storedFilename + " od użytkownika ID: " + user.getId());
@@ -38,11 +40,45 @@ public class XrdFileService {
         xrdFile.setOriginalFilename(file.getOriginalFilename());
         xrdFile.setUserFilename(userFilename);
         xrdFile.setUser(user);
-        xrdFile.setPublicVisible(publicVisible); // <-- zmieniona metoda settera
+        xrdFile.setPublicVisible(isPublic);
 
         return xrdFileRepository.save(xrdFile);
     }
 
+    public List<XrdFileResponseDTO> getFilesForUser(User user) {
+        return xrdFileRepository.findAll().stream()
+                .filter(f -> f.getUser().getId().equals(user.getId()))
+                .map(XrdFileResponseDTO::from)
+                .collect(Collectors.toList());
+    }
+
+    public XrdFileResponseDTO getFileForUser(Long id, User user) {
+        XrdFile file = xrdFileRepository.findById(id)
+                .filter(f -> f.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku lub brak dostępu"));
+        return XrdFileResponseDTO.from(file);
+    }
+
+    public XrdFileResponseDTO updateFileMetadata(Long id, XrdFileResponseDTO updated, User user) {
+        XrdFile file = xrdFileRepository.findById(id)
+                .filter(f -> f.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku lub brak dostępu"));
+
+        file.setUserFilename(updated.getUserFilename());
+        file.setPublicVisible(updated.isPublicVisible());
+        return XrdFileResponseDTO.from(xrdFileRepository.save(file));
+    }
+
+    public void deleteFile(Long id, User user) {
+        XrdFile file = xrdFileRepository.findById(id)
+                .filter(f -> f.getUser().getId().equals(user.getId()))
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku lub brak dostępu"));
+
+        cloudStorageService.deleteFile(file.getStoredFilename());
+        xrdFileRepository.delete(file);
+    }
+
+    // 🔍 Parsowanie nagłówka UXD
     private XrdFile parseHeader(InputStream stream) throws IOException {
         XrdFile xrd = new XrdFile();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
