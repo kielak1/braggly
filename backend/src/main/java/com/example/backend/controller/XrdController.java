@@ -51,10 +51,11 @@ public class XrdController {
     public ResponseEntity<XrdFileResponseDTO> uploadXrdFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("name") String userFilename,
-            @RequestParam(defaultValue = "true") boolean isPublic,
+            @RequestParam("publicVisible") Boolean isPublic,
             @AuthenticationPrincipal User user) {
         try {
-            XrdFile xrdFile = xrdFileService.saveUxdFile(file, userFilename, isPublic, user);
+            boolean publicFlag = Boolean.TRUE.equals(isPublic); // null -> false
+            XrdFile xrdFile = xrdFileService.saveUxdFile(file, userFilename, publicFlag, user);
             return ResponseEntity.ok(XrdFileResponseDTO.from(xrdFile));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
