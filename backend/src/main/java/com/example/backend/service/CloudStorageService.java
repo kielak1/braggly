@@ -13,56 +13,69 @@ import software.amazon.awssdk.services.s3.model.*;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 @Service
 public class CloudStorageService {
 
-    @Value("${cloud.b2.bucket}")
-    private String bucketName;
+        @Value("${cloud.b2.bucket}")
+        private String bucketName;
 
-    @Value("${cloud.b2.endpoint}")
-    private String endpoint;
+        @Value("${cloud.b2.endpoint}")
+        private String endpoint;
 
-    @Value("${cloud.b2.region}")
-    private String region;
+        @Value("${cloud.b2.region}")
+        private String region;
 
-    @Value("${cloud.b2.access-key}")
-    private String accessKey;
+        @Value("${cloud.b2.access-key}")
+        private String accessKey;
 
-    @Value("${cloud.b2.secret-key}")
-    private String secretKey;
+        @Value("${cloud.b2.secret-key}")
+        private String secretKey;
 
-    private S3Client s3Client;
+        private S3Client s3Client;
 
-    @PostConstruct
-    public void init() {
-        s3Client = S3Client.builder()
-                .credentialsProvider(
-                        StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create(accessKey, secretKey)))
-                .endpointOverride(URI.create(endpoint))
-                .region(Region.of(region))
-                .build();
-    }
+        @PostConstruct
+        public void init() {
+                s3Client = S3Client.builder()
+                                .credentialsProvider(
+                                                StaticCredentialsProvider.create(
+                                                                AwsBasicCredentials.create(accessKey, secretKey)))
+                                .endpointOverride(URI.create(endpoint))
+                                .region(Region.of(region))
+                                .build();
+        }
 
-    public void uploadFile(String filename, MultipartFile file) throws IOException {
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(filename)
-                .contentType(file.getContentType())
-                .build();
+        public void uploadFile(String filename, MultipartFile file) throws IOException {
+                PutObjectRequest request = PutObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(filename)
+                                .contentType(file.getContentType())
+                                .build();
 
-        s3Client.putObject(request, RequestBody.fromInputStream(
-                file.getInputStream(), file.getSize()));
-    }
+                s3Client.putObject(request, RequestBody.fromInputStream(
+                                file.getInputStream(), file.getSize()));
+        }
 
-    public void deleteFile(String filename) {
-        DeleteObjectRequest request = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(filename)
-                .build();
+        public void deleteFile(String filename) {
+                DeleteObjectRequest request = DeleteObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(filename)
+                                .build();
 
-        s3Client.deleteObject(request);
-    }
+                s3Client.deleteObject(request);
+        }
+
+        public InputStream downloadFile(String filename) throws IOException {
+                // Tworzymy żądanie pobrania pliku z S3/Backblaze B2
+                GetObjectRequest request = GetObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(filename)
+                                .build();
+
+                // Pobieramy plik i zwracamy jego zawartość jako InputStream
+                return s3Client.getObject(request);
+        }
+
 }

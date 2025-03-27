@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -32,6 +33,23 @@ public class XrdController {
     public XrdController(XrdService xrdService, XrdFileService xrdFileService) {
         this.xrdService = xrdService;
         this.xrdFileService = xrdFileService;
+    }
+
+    @Operation(summary = "Analiza pliku XRD", description = "Zwraca wyniki analizy pliku XRD na podstawie ID pliku.")
+    @GetMapping("/analyze/{fileId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<XrdData> getAnalysis(@PathVariable Long fileId, @AuthenticationPrincipal User user)
+            throws Exception {
+        // Sprawdzamy dostępność pliku dla użytkownika
+        xrdFileService.getEntityForUser(fileId, user); // Sprawdzamy, czy użytkownik ma dostęp do pliku
+
+        // Pobieramy plik do analizy
+        InputStream inputStream = xrdFileService.getFileForAnalysis(fileId);
+
+        // Wykonujemy analizę XRD na podstawie pliku
+        XrdData result = xrdService.analyzeXrdFileFromStream(inputStream);
+
+        return ResponseEntity.ok(result);
     }
 
     @Operation(summary = "Analiza pliku XRD", description = "Przyjmuje plik UXD, wykonuje analizę i zwraca dane analizy.")

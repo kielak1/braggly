@@ -23,9 +23,34 @@ public class XrdFileService {
 
     private static final Logger logger = Logger.getLogger(XrdFileService.class.getName());
 
+    // src/main/java/com/example/backend/service/XrdFileService.java
+    public XrdFile getEntityForUser(Long fileId, User user) {
+        // Znajdź plik na podstawie jego ID
+        XrdFile file = xrdFileRepository.findById(fileId)
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku o ID: " + fileId));
+
+        // Sprawdź, czy plik należy do danego użytkownika
+        if (!file.getUser().getId().equals(user.getId())) {
+            // Jeśli plik nie należy do użytkownika, rzucamy wyjątek z odpowiednią
+            // informacją
+            throw new RuntimeException("Brak dostępu do pliku o ID: " + fileId);
+        }
+
+        // Jeśli wszystko jest w porządku, zwróć plik
+        return file;
+    }
+
     public XrdFileService(XrdFileRepository xrdFileRepository, CloudStorageService cloudStorageService) {
         this.xrdFileRepository = xrdFileRepository;
         this.cloudStorageService = cloudStorageService;
+    }
+
+    public InputStream getFileForAnalysis(Long id) throws IOException {
+        XrdFile file = xrdFileRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku lub brak dostępu"));
+
+        // Pobranie pliku z cloud storage
+        return cloudStorageService.downloadFile(file.getStoredFilename());
     }
 
     public XrdFile saveUxdFile(MultipartFile file, String userFilename, boolean isPublic, User user)
