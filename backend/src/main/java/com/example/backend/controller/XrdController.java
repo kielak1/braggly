@@ -1,4 +1,3 @@
-// src/main/java/com/example/backend/controller/XrdController.java
 package com.example.backend.controller;
 
 import com.example.backend.dto.XrdFileResponseDTO;
@@ -85,6 +84,12 @@ public class XrdController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<XrdFileResponseDTO>> listXrdFiles(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(xrdFileService.getFilesForUser(user));
+    }
+
+    @Operation(summary = "Lista publicznych plików", description = "Zwraca listę wszystkich publicznych plików UXD.")
+    @GetMapping("/public-files")
+    public ResponseEntity<List<XrdFileResponseDTO>> listPublicXrdFiles() {
+        return ResponseEntity.ok(xrdFileService.getPublicFiles());
     }
 
     @Operation(summary = "Pojedynczy plik UXD", description = "Zwraca metadane pojedynczego pliku UXD po ID.")

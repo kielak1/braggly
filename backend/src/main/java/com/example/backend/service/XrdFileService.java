@@ -23,20 +23,18 @@ public class XrdFileService {
 
     private static final Logger logger = Logger.getLogger(XrdFileService.class.getName());
 
-    // src/main/java/com/example/backend/service/XrdFileService.java
     public XrdFile getEntityForUser(Long fileId, User user) {
         // Znajdź plik na podstawie jego ID
         XrdFile file = xrdFileRepository.findById(fileId)
                 .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku o ID: " + fileId));
 
-        // Sprawdź, czy plik należy do danego użytkownika
-        if (!file.getUser().getId().equals(user.getId())) {
-            // Jeśli plik nie należy do użytkownika, rzucamy wyjątek z odpowiednią
-            // informacją
+        // Sprawdź, czy plik należy do danego użytkownika lub jest publiczny
+        if (!file.getUser().getId().equals(user.getId()) && !file.isPublicVisible()) {
+            // Jeśli plik nie należy do użytkownika i nie jest publiczny, rzucamy wyjątek
             throw new RuntimeException("Brak dostępu do pliku o ID: " + fileId);
         }
 
-        // Jeśli wszystko jest w porządku, zwróć plik
+        // Jeśli użytkownik jest właścicielem lub plik jest publiczny, zwróć plik
         return file;
     }
 
@@ -162,5 +160,13 @@ public class XrdFileService {
             logger.warning("Błąd parsowania int: " + line);
             return null;
         }
+    }
+
+    // Nowa metoda do pobierania publicznych plików
+    public List<XrdFileResponseDTO> getPublicFiles() {
+        List<XrdFile> publicFiles = xrdFileRepository.findByPublicVisibleTrue();
+        return publicFiles.stream()
+                .map(XrdFileResponseDTO::from)
+                .collect(Collectors.toList());
     }
 }
