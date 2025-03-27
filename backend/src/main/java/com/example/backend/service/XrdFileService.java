@@ -28,13 +28,18 @@ public class XrdFileService {
         XrdFile file = xrdFileRepository.findById(fileId)
                 .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku o ID: " + fileId));
 
-        // Sprawdź, czy plik należy do danego użytkownika lub jest publiczny
-        if (!file.getUser().getId().equals(user.getId()) && !file.isPublicVisible()) {
-            // Jeśli plik nie należy do użytkownika i nie jest publiczny, rzucamy wyjątek
-            throw new RuntimeException("Brak dostępu do pliku o ID: " + fileId);
+        // Jeśli plik jest publiczny, zezwól na dostęp bez sprawdzania użytkownika
+        if (file.isPublicVisible()) {
+            return file;
         }
 
-        // Jeśli użytkownik jest właścicielem lub plik jest publiczny, zwróć plik
+        // Jeśli plik nie jest publiczny, użytkownik musi być zalogowany i być
+        // właścicielem
+        if (user == null || !file.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException(
+                    "Brak dostępu do pliku o ID: " + fileId + ". Plik nie jest publiczny i nie należy do użytkownika.");
+        }
+
         return file;
     }
 

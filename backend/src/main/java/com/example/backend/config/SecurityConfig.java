@@ -52,6 +52,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/payments/webhook").permitAll() // ✅ Webhook Stripe dostępny publicznie
                 .requestMatchers("/debug/**").permitAll()               
                 .requestMatchers("/api/hello").authenticated() // 📌 API wymaga autoryzacji
+                // Nowe reguły dla publicznych plików XRD i analizy
+                .requestMatchers("/api/xrd/public-files").permitAll()
+                .requestMatchers("/api/xrd/analyze/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT Security

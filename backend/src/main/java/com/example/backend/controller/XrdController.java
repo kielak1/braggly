@@ -36,11 +36,10 @@ public class XrdController {
 
     @Operation(summary = "Analiza pliku XRD", description = "Zwraca wyniki analizy pliku XRD na podstawie ID pliku.")
     @GetMapping("/analyze/{fileId}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<XrdData> getAnalysis(@PathVariable Long fileId, @AuthenticationPrincipal User user)
             throws Exception {
-        // Sprawdzamy dostępność pliku dla użytkownika
-        xrdFileService.getEntityForUser(fileId, user); // Sprawdzamy, czy użytkownik ma dostęp do pliku
+        // Sprawdzamy dostępność pliku dla użytkownika (lub brak użytkownika, jeśli publiczny)
+        xrdFileService.getEntityForUser(fileId, user);
 
         // Pobieramy plik do analizy
         InputStream inputStream = xrdFileService.getFileForAnalysis(fileId);
