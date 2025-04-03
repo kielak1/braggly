@@ -1,4 +1,3 @@
-// src/main/java/com/example/backend/dto/XrdFileResponseDTO.java
 package com.example.backend.dto;
 
 import com.example.backend.model.XrdFile;
@@ -22,6 +21,7 @@ public class XrdFileResponseDTO {
     private String institutionUser;
     private String dateMeasured;
     private LocalDateTime uploadedAt;
+    private Long userId; // ✅ DODANE
 
     public static XrdFileResponseDTO from(XrdFile file) {
         return XrdFileResponseDTO.builder()
@@ -36,6 +36,7 @@ public class XrdFileResponseDTO {
                 .institutionUser(file.getInstitutionUser())
                 .dateMeasured(file.getDateMeasured())
                 .uploadedAt(file.getUploadedAt())
+                .userId(file.getUser().getId()) // ✅ DODANE
                 .build();
     }
 }
