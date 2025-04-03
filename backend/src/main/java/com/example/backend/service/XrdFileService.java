@@ -82,7 +82,7 @@ public class XrdFileService {
 
     public XrdFileResponseDTO getFileForUser(Long id, User user) {
         XrdFile file = xrdFileRepository.findById(id)
-                .filter(f -> f.getUser().getId().equals(user.getId()))
+                .filter(f -> f.getUser().getId().equals(user.getId()) || f.isPublicVisible())
                 .orElseThrow(() -> new EntityNotFoundException("Nie znaleziono pliku lub brak dostępu"));
         return XrdFileResponseDTO.from(file);
     }
