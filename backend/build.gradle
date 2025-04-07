@@ -73,6 +73,10 @@ dependencies {
     
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+
+implementation 'org.apache.commons:commons-csv:1.10.0'
+
+implementation 'org.flywaydb:flyway-core:9.22.3'
 }
 
 tasks.named('test') {

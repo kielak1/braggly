@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll() // 🔓 Publiczne endpointy do logowania
                 .requestMatchers("/api/payments/webhook").permitAll() // ✅ Webhook Stripe dostępny publicznie
                 .requestMatchers("/debug/**").permitAll() 
-            //    .requestMatchers("/api/admin/parameters/get/**").permitAll()                              
+                .requestMatchers("/api/cod**").permitAll()                              
                 .requestMatchers("/api/hello").authenticated() // 📌 API wymaga autoryzacji
                 // Nowe reguły dla publicznych plików XRD i analizy
                 .requestMatchers("/api/xrd/public-files").permitAll()
