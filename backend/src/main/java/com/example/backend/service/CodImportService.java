@@ -1,8 +1,11 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.CodImportResult;
+import com.example.backend.dto.CodQueryStatusResponse;
 import com.example.backend.model.CodEntry;
+import com.example.backend.model.CodQuery;
 import com.example.backend.repository.CodEntryRepository;
+import com.example.backend.repository.CodQueryRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -17,8 +20,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,15 +28,51 @@ import java.util.stream.IntStream;
 public class CodImportService {
 
     private static final Logger log = LoggerFactory.getLogger(CodImportService.class);
-    private final CodEntryRepository codEntryRepository;
 
-    public CodImportService(CodEntryRepository codEntryRepository) {
+    private final CodEntryRepository codEntryRepository;
+    private final CodQueryRepository codQueryRepository;
+
+    public CodImportService(CodEntryRepository codEntryRepository, CodQueryRepository codQueryRepository) {
         this.codEntryRepository = codEntryRepository;
+        this.codQueryRepository = codQueryRepository;
+    }
+
+    public CodQueryStatusResponse checkAndImport(List<String> elements) {
+        Set<String> requestedSet = new HashSet<>(elements);
+        String normalizedKey = elements.stream().sorted().collect(Collectors.joining(","));
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime cutoff = now.minusHours(24);
+
+        List<CodQuery> completed = codQueryRepository.findRecentCompletedQueries(cutoff);
+        for (CodQuery q : completed) {
+            Set<String> qSet = new HashSet<>(Arrays.asList(q.getElementSet().split(",")));
+            // Jeżeli zapytanie z bazy jest PODZBIOREM aktualnego zapytania — nie wystarcza
+            if (requestedSet.containsAll(qSet)) {
+                return new CodQueryStatusResponse(true, false, true, q.getRequestedAt());
+            }
+        }
+
+        List<CodQuery> pending = codQueryRepository.findRecentPendingQueries(cutoff);
+        for (CodQuery q : pending) {
+            if (q.getElementSet().equals(normalizedKey)) {
+                return new CodQueryStatusResponse(false, true, false, null);
+            }
+        }
+
+        CodQuery newQuery = new CodQuery(normalizedKey, now, false);
+        codQueryRepository.save(newQuery);
+
+        new Thread(() -> {
+            importFromCod(elements);
+            newQuery.setCompleted(true);
+            codQueryRepository.save(newQuery);
+        }).start();
+
+        return new CodQueryStatusResponse(false, true, false, null);
     }
 
     public List<CodImportResult> importFromCod(List<String> elements) {
         List<CodImportResult> results = new ArrayList<>();
-
         try {
             String baseUrl = "https://www.crystallography.net/cod/result.php";
             String queryParams = IntStream.range(0, elements.size())
@@ -45,8 +83,7 @@ public class CodImportService {
             log.info("Pobieranie danych z COD: {}", fullUrl);
 
             URL url = new URL(fullUrl);
-            try (
-                    InputStream input = url.openStream();
+            try (InputStream input = url.openStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
                 List<String> validLines = reader.lines()
                         .filter(line -> !line.trim().startsWith("#"))
@@ -57,7 +94,7 @@ public class CodImportService {
                         CSVFormat.DEFAULT.withFirstRecordAsHeader());
 
                 for (CSVRecord record : csvParser) {
-                    String codId = record.get("file"); // poprawne pole!
+                    String codId = record.get("file");
                     String mineral = record.isMapped("mineral") ? record.get("mineral") : "";
 
                     CodEntry entry = codEntryRepository.findByCodId(codId).orElse(new CodEntry());
@@ -75,7 +112,6 @@ public class CodImportService {
                     codEntryRepository.save(entry);
                     results.add(new CodImportResult(codId, mineral));
                 }
-
                 log.info("Zakończono import z COD. Liczba rekordów: {}", results.size());
             }
 

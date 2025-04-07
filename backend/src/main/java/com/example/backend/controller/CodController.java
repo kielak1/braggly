@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.CodImportResult;
+import com.example.backend.dto.CodQueryStatusResponse; // ← ten import był pominięty
 import com.example.backend.service.CodImportService;
 
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,10 @@ public class CodController {
     }
 
     @PostMapping("/search")
-    public List<CodImportResult> searchByElements(@RequestBody String body) {
+    public CodQueryStatusResponse searchOrPoll(@RequestBody String body) {
         List<String> elements = Arrays.stream(body.trim().split("\\s+"))
                 .filter(s -> !s.isBlank())
                 .collect(Collectors.toList());
-        return codImportService.importFromCod(elements);
+        return codImportService.checkAndImport(elements);
     }
 }

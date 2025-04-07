@@ -8,4 +8,3 @@ import java.util.Optional;
 public interface CodEntryRepository extends JpaRepository<CodEntry, Long> {
     Optional<CodEntry> findByCodId(String codId);
 }
-
