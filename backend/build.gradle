@@ -70,14 +70,19 @@ dependencies {
     // Obsługa adnotacji jak @PostConstruct
     implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
-    
+    // Webflux
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    // Apache Commons CSV
+    implementation 'org.apache.commons:commons-csv:1.10.0'
 
-implementation 'org.apache.commons:commons-csv:1.10.0'
+    // Flyway
+    implementation 'org.flywaydb:flyway-core:9.22.3'
 
-implementation 'org.flywaydb:flyway-core:9.22.3'
+    // CIF Tools Java
+    implementation 'org.rcsb:ciftools-java:7.0.1'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
