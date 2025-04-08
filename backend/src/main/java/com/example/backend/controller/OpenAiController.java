@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 public class OpenAiController {
 
     private final OpenAiService openAiService;
-    private final ObjectMapper objectMapper; // Dodano pole ObjectMapper
+    private final ObjectMapper objectMapper;
 
     public OpenAiController(OpenAiService openAiService, ObjectMapper objectMapper) {
         this.openAiService = openAiService;
-        this.objectMapper = objectMapper; // Wstrzyknięcie przez konstruktor
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping("/simple")
@@ -38,16 +38,18 @@ public class OpenAiController {
     @PostMapping("/cod")
     public ResponseEntity<?> getCodFormula(@RequestBody String compoundName) {
         String prompt = "Podaj wzór związku chemicznego w formacie akceptowanym przez wyszukiwarkę Crystallography Open Database (COD) "
-                + "dla substancji o nazwie '" + compoundName.trim()
-                + "'. Odpowiedz wyłącznie w formacie JSON w postaci: { \"formula\": \"- A1 B2 ... NX -\" }, "
+                + "oraz poprawną nazwę chemiczną (w języku angielskim) dla substancji o nazwie '" + compoundName.trim()
+                + "'. Odpowiedz wyłącznie w formacie JSON w postaci: { \"formula\": \"- A1 B2 ... NX -\", \"name\": \"nazwa\" }, "
                 + "gdzie A, B, ..., N to symbole pierwiastków chemicznych, a 1, 2, ..., X to liczby atomów. Wzór musi być otoczony spacjami i znakami '-' (dokładnie: '- ' przed pierwszym atomem i ' -' po ostatnim). "
-                + "Przed pierwszym znakiem '-' nie może być żadnych znaków ani po ostatnim znaku '-' nie może być żadnych spacji. Nie dodawaj żadnych komentarzy ani dodatkowego tekstu.";
+                + "Nigdy nie dawaj dwóch białych znaków po sobie. Nigdy niedawaja odstęppu pomiędzy symbolami pierwiastków i liczbami atomów. "
+                + "Przed pierwszym znakiem '-' nie może być żadnych znaków ani po ostatnim znaku '-' nie może być żadnych spacji. 'name' to poprawna nazwa chemiczna substancji. Nie dodawaj żadnych komentarzy ani dodatkowego tekstu.";
 
-        String response = openAiService.askOpenAi(prompt); // Zmiana na String zamiast OpenAiResponse
+        String response = openAiService.askOpenAi(prompt);
 
         try {
-            JsonNode json = objectMapper.readTree(response); // Parsowanie String do JSON
+            JsonNode json = objectMapper.readTree(response);
             String formula = json.get("formula").asText();
+            String chemicalName = json.get("name").asText(); // Pobieramy nazwę od LLM
             String cleaned = formula.replaceAll("[-]", "").trim();
             Set<String> elements = Arrays.stream(cleaned.split("\\s+"))
                     .map(s -> s.replaceAll("\\d+", ""))
@@ -56,7 +58,8 @@ public class OpenAiController {
                     objectMapper.createObjectNode()
                             .put("formulaCOD", formula)
                             .put("queryCOD", String.join(" ", elements))
-                            .put("elementCount", elements.size()));
+                            .put("elementCount", elements.size())
+                            .put("compoundName", chemicalName)); // Używamy nazwy od LLM
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Niepoprawny format odpowiedzi AI");
         }

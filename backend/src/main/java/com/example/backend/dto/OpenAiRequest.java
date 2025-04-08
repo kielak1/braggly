@@ -9,7 +9,7 @@ public class OpenAiRequest {
 
     public OpenAiRequest(String prompt) {
         this.messages = List.of(
-            Map.of("role", "system", "content", "Odpowiadaj zawsze prostym językiem dla licealisty."),
+            // Map.of("role", "system", "content", "Odpowiadaj zawsze prostym językiem dla licealisty."),
             Map.of("role", "user", "content", prompt)
         );
     }
