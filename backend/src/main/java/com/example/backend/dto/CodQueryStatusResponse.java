@@ -7,13 +7,21 @@ public class CodQueryStatusResponse {
     private boolean queryRunning;
     private boolean completed;
     private LocalDateTime lastCompleted;
+    private int progress; 
 
     public CodQueryStatusResponse(boolean alreadyQueried, boolean queryRunning, boolean completed,
-            LocalDateTime lastCompleted) {
+            LocalDateTime lastCompleted, int progress) {
         this.alreadyQueried = alreadyQueried;
         this.queryRunning = queryRunning;
         this.completed = completed;
         this.lastCompleted = lastCompleted;
+        this.progress = progress;
+    }
+
+    // Możesz zostawić poprzedni konstruktor, jeśli jest używany gdzieś indziej
+    public CodQueryStatusResponse(boolean alreadyQueried, boolean queryRunning, boolean completed,
+            LocalDateTime lastCompleted) {
+        this(alreadyQueried, queryRunning, completed, lastCompleted, 0);
     }
 
     public boolean isAlreadyQueried() {
@@ -30,5 +38,9 @@ public class CodQueryStatusResponse {
 
     public LocalDateTime getLastCompleted() {
         return lastCompleted;
+    }
+
+    public int getProgress() {
+        return progress;
     }
 }

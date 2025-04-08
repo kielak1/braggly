@@ -48,14 +48,14 @@ public class CodImportService {
             Set<String> qSet = new HashSet<>(Arrays.asList(q.getElementSet().split(",")));
             // Jeżeli zapytanie z bazy jest PODZBIOREM aktualnego zapytania — nie wystarcza
             if (requestedSet.containsAll(qSet)) {
-                return new CodQueryStatusResponse(true, false, true, q.getRequestedAt());
+                return new CodQueryStatusResponse(true, false, true, q.getRequestedAt(), 100);
             }
         }
 
         List<CodQuery> pending = codQueryRepository.findRecentPendingQueries(cutoff);
         for (CodQuery q : pending) {
             if (q.getElementSet().equals(normalizedKey)) {
-                return new CodQueryStatusResponse(false, true, false, null);
+                return new CodQueryStatusResponse(false, true, false, null, q.getProgress());
             }
         }
 
@@ -63,17 +63,18 @@ public class CodImportService {
         codQueryRepository.save(newQuery);
 
         new Thread(() -> {
-            importFromCod(elements);
+            importFromCod(elements, newQuery);
             newQuery.setCompleted(true);
             codQueryRepository.save(newQuery);
         }).start();
 
-        return new CodQueryStatusResponse(false, true, false, null);
+        return new CodQueryStatusResponse(false, true, false, null, 0);
     }
 
-    public List<CodImportResult> importFromCod(List<String> elements) {
+    public List<CodImportResult> importFromCod(List<String> elements, CodQuery query) {
         List<CodImportResult> results = new ArrayList<>();
         try {
+            // (jak dotąd)
             String baseUrl = "https://www.crystallography.net/cod/result.php";
             String queryParams = IntStream.range(0, elements.size())
                     .mapToObj(i -> "el" + (i + 1) + "=" + elements.get(i))
@@ -85,6 +86,7 @@ public class CodImportService {
             URL url = new URL(fullUrl);
             try (InputStream input = url.openStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
+
                 List<String> validLines = reader.lines()
                         .filter(line -> !line.trim().startsWith("#"))
                         .collect(Collectors.toList());
@@ -92,6 +94,9 @@ public class CodImportService {
                 CSVParser csvParser = CSVParser.parse(
                         String.join("\n", validLines),
                         CSVFormat.DEFAULT.withFirstRecordAsHeader());
+
+                int total = validLines.size();
+                int processed = 0;
 
                 for (CSVRecord record : csvParser) {
                     String codId = record.get("file");
@@ -111,6 +116,13 @@ public class CodImportService {
 
                     codEntryRepository.save(entry);
                     results.add(new CodImportResult(codId, mineral));
+
+                    processed++;
+                    if (processed % 100 == 0 || processed == total) {
+                        int progress = (int) (((double) processed / total) * 100);
+                        query.setProgress(progress);
+                        codQueryRepository.save(query);
+                    }
                 }
                 log.info("Zakończono import z COD. Liczba rekordów: {}", results.size());
             }
@@ -125,4 +137,5 @@ public class CodImportService {
 
         return results;
     }
+
 }

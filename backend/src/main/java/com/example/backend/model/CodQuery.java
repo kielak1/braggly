@@ -20,6 +20,9 @@ public class CodQuery {
     @Column(name = "completed", nullable = false)
     private boolean completed;
 
+    @Column(name = "progress", nullable = false)
+    private int progress = 0;
+
     public CodQuery() {
     }
 
@@ -60,4 +63,13 @@ public class CodQuery {
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
 }
