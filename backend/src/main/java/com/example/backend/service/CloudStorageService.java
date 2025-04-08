@@ -10,6 +10,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
+import java.io.ByteArrayOutputStream;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -76,6 +77,28 @@ public class CloudStorageService {
 
                 // Pobieramy plik i zwracamy jego zawartość jako InputStream
                 return s3Client.getObject(request);
+        }
+
+        public void uploadInputStream(String filename, InputStream inputStream) {
+                try {
+                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                        byte[] data = new byte[8192];
+                        int nRead;
+                        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                                buffer.write(data, 0, nRead);
+                        }
+                        byte[] bytes = buffer.toByteArray();
+
+                        PutObjectRequest request = PutObjectRequest.builder()
+                                        .bucket(bucketName)
+                                        .key(filename)
+                                        .contentType("text/plain")
+                                        .build();
+
+                        s3Client.putObject(request, RequestBody.fromBytes(bytes));
+                } catch (IOException e) {
+                        throw new RuntimeException("Błąd podczas przesyłania pliku do B2", e);
+                }
         }
 
 }
