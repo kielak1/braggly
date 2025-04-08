@@ -42,6 +42,7 @@ public class OpenAiController {
                 + "'. Odpowiedz wyłącznie w formacie JSON w postaci: { \"formula\": \"- A1 B2 ... NX -\", \"name\": \"nazwa\" }, "
                 + "gdzie A, B, ..., N to symbole pierwiastków chemicznych, a 1, 2, ..., X to liczby atomów. Wzór musi być otoczony spacjami i znakami '-' (dokładnie: '- ' przed pierwszym atomem i ' -' po ostatnim). "
                 + "Nigdy nie dawaj dwóch białych znaków po sobie. Nigdy niedawaja odstęppu pomiędzy symbolami pierwiastków i liczbami atomów. "
+                + "Jeżeli w odpowiedzi miałby być jeden atom danygo pierwiastka np. O1, N1, C1 to zawsze pomijaj liczbę 1 i pisz O, N, C"
                 + "Przed pierwszym znakiem '-' nie może być żadnych znaków ani po ostatnim znaku '-' nie może być żadnych spacji. 'name' to poprawna nazwa chemiczna substancji. Nie dodawaj żadnych komentarzy ani dodatkowego tekstu.";
 
         String response = openAiService.askOpenAi(prompt);
