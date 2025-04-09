@@ -36,13 +36,10 @@ public class CodController {
     @GetMapping("/id")
     public ResponseEntity<List<String>> getCodIdsByFormula(@RequestParam String formula) {
         List<CodEntry> entries = codEntryRepository.findAllByFormula(formula);
-        if (entries.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         List<String> codIds = entries.stream()
                 .map(CodEntry::getCodId)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(codIds);
+        return ResponseEntity.ok(codIds);  
     }
 
 }
