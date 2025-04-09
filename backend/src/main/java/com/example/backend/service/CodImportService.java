@@ -41,7 +41,7 @@ public class CodImportService {
         Set<String> requestedSet = new HashSet<>(elements);
         String normalizedKey = elements.stream().sorted().collect(Collectors.joining(","));
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime cutoff = now.minusHours(24);
+        LocalDateTime cutoff = now.minusHours(240);
 
         List<CodQuery> completed = codQueryRepository.findRecentCompletedQueries(cutoff);
         for (CodQuery q : completed) {

@@ -20,6 +20,9 @@ configurations {
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
@@ -79,10 +82,12 @@ dependencies {
     // Flyway
     implementation 'org.flywaydb:flyway-core:9.22.3'
 
-    // CIF Tools Java
-    implementation 'org.rcsb:ciftools-java:7.0.1'
-}
+    // CIF Tools Java (lokalny jar)
 
+implementation name: 'ciftools-java-7.0.1'
+
+
+}
 
 tasks.named('test') {
     useJUnitPlatform()
