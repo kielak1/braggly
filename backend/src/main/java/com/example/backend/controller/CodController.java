@@ -55,14 +55,34 @@ public class CodController {
 
     @GetMapping("/active-imports")
     public ResponseEntity<List<CodQueryShortDTO>> getActiveImports() {
-        LocalDateTime cutoff = LocalDateTime.now().minusHours(2400);  
+        LocalDateTime cutoff = LocalDateTime.now().minusHours(2400);
 
         List<CodQueryShortDTO> list = codQueryRepository.findRecentPendingQueries(cutoff)
                 .stream()
-                .map(q -> new CodQueryShortDTO(q.getElementsAsFormula(), q.getRequestedAt().toString()))
+                .map(q -> {
+                    String formula = q.getElementsAsFormula();
+                    String requestedAtStr = q.getRequestedAt().toString();
+                    String eta = estimateRemainingTime(q.getRequestedAt(), q.getProgress());
+                    return new CodQueryShortDTO(formula, requestedAtStr, eta);
+                })
                 .toList();
 
         return ResponseEntity.ok(list);
     }
 
+    private String estimateRemainingTime(LocalDateTime requestedAt, int progress) {
+        if (progress <= 0 || progress >= 100) {
+            return "00:00:00";
+        }
+
+        long elapsedSeconds = java.time.Duration.between(requestedAt, LocalDateTime.now()).getSeconds();
+        double estimatedTotalSeconds = elapsedSeconds / (progress / 100.0);
+        long remainingSeconds = Math.round(estimatedTotalSeconds - elapsedSeconds);
+
+        long hours = remainingSeconds / 3600;
+        long minutes = (remainingSeconds % 3600) / 60;
+        long seconds = remainingSeconds % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
 }
