@@ -55,7 +55,7 @@ public class CodController {
 
     @GetMapping("/active-imports")
     public ResponseEntity<List<CodQueryShortDTO>> getActiveImports() {
-        LocalDateTime cutoff = LocalDateTime.now().minusHours(24); // lub 1h jeśli chcesz krócej
+        LocalDateTime cutoff = LocalDateTime.now().minusHours(2400);  
 
         List<CodQueryShortDTO> list = codQueryRepository.findRecentPendingQueries(cutoff)
                 .stream()
