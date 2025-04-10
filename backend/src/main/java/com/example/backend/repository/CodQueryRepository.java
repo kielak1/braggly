@@ -16,4 +16,8 @@ public interface CodQueryRepository extends JpaRepository<CodQuery, Long> {
     @Query("SELECT q FROM CodQuery q WHERE q.requestedAt > :cutoff AND q.completed = false")
     List<CodQuery> findRecentPendingQueries(@Param("cutoff") LocalDateTime cutoff);
 
+    void deleteByCompletedFalse();
+
+    long countByCompletedFalse();
+
 }
