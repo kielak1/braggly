@@ -14,12 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -74,6 +73,8 @@ public class CodImportService {
     @Transactional
     public List<CodImportResult> importFromCod(List<String> elements, CodQuery query) {
         List<CodImportResult> results = new ArrayList<>();
+        Path tempFile = null;
+
         try {
             String baseUrl = "https://www.crystallography.net/cod/result.php";
             String queryParams = IntStream.range(0, elements.size())
@@ -84,30 +85,43 @@ public class CodImportService {
             log.info("Pobieranie danych z COD: {}", fullUrl);
 
             URL url = new URL(fullUrl);
-            try (InputStream input = url.openStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
+            tempFile = Files.createTempFile("cod_import", ".csv");
 
-                List<String> validLines = reader.lines()
-                        .filter(line -> !line.trim().startsWith("#"))
-                        .collect(Collectors.toList());
+            int totalLines = 0;
+            try (BufferedReader in = new BufferedReader(
+                    new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
+                    BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
 
-                CSVParser csvParser = CSVParser.parse(
-                        String.join("\n", validLines),
-                        CSVFormat.DEFAULT.withFirstRecordAsHeader());
+                String line;
+                while ((line = in.readLine()) != null) {
+                    if (!line.trim().startsWith("#")) {
+                        out.write(line);
+                        out.newLine();
+                        totalLines++;
+                    }
+                }
+            }
+
+            log.info("Liczba rekordów do przetworzenia: {}", totalLines);
+
+            try (BufferedReader reader = Files.newBufferedReader(tempFile, StandardCharsets.UTF_8)) {
+                CSVParser csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
 
                 Iterator<CSVRecord> iterator = csvParser.iterator();
                 List<CSVRecord> batch = new ArrayList<>();
                 int batchSize = 500;
+                int processed = 0;
 
                 while (iterator.hasNext()) {
                     batch.add(iterator.next());
                     if (batch.size() >= batchSize) {
-                        processBatch(batch, results, query);
+                        processBatch(batch, results, query, processed, totalLines);
+                        processed += batch.size();
                         batch.clear();
                     }
                 }
                 if (!batch.isEmpty()) {
-                    processBatch(batch, results, query);
+                    processBatch(batch, results, query, processed, totalLines);
                 }
 
                 log.info("Zakończono import z COD. Liczba rekordów: {}", results.size());
@@ -119,12 +133,22 @@ public class CodImportService {
             log.error("Błąd danych wejściowych lub brak nagłówków CSV", e);
         } catch (Exception e) {
             log.error("Niespodziewany błąd podczas importu danych z COD", e);
+        } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                    log.info("Usunięto plik tymczasowy: {}", tempFile);
+                } catch (IOException e) {
+                    log.warn("Nie udało się usunąć pliku tymczasowego: {}", tempFile);
+                }
+            }
         }
 
         return results;
     }
 
-    private void processBatch(List<CSVRecord> batch, List<CodImportResult> results, CodQuery query) {
+    private void processBatch(List<CSVRecord> batch, List<CodImportResult> results, CodQuery query, int processedSoFar,
+            int totalLines) {
         List<String> codIds = batch.stream()
                 .map(r -> r.get("file"))
                 .collect(Collectors.toList());
@@ -161,8 +185,8 @@ public class CodImportService {
 
         codEntryRepository.saveAll(toSave);
 
-        int totalSoFar = results.size();
-        int progress = (int) (((double) totalSoFar / 1000000.0) * 100);
+        int totalSoFar = processedSoFar + batch.size();
+        int progress = (int) (((double) totalSoFar / totalLines) * 100);
         query.setProgress(progress);
         codQueryRepository.save(query);
     }
