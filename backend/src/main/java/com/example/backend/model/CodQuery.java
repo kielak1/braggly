@@ -1,7 +1,10 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Table(name = "cod_query")
@@ -72,4 +75,17 @@ public class CodQuery {
         this.progress = progress;
     }
 
+    /**
+     * Zwraca listę pierwiastków z pola elementSet, np. ["C", "H", "N"]
+     */
+    public List<String> getElementsList() {
+        return Arrays.asList(elementSet.split(","));
+    }
+
+    /**
+     * Zwraca pierwiastki w formacie do wyszukiwania (spacja oddziela), np. "C H N"
+     */
+    public String getElementsAsFormula() {
+        return String.join(" ", getElementsList());
+    }
 }
