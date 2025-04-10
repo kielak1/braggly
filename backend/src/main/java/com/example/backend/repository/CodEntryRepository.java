@@ -9,6 +9,8 @@ public interface CodEntryRepository extends JpaRepository<CodEntry, Long> {
     Optional<CodEntry> findByCodId(String codId);
 
     Optional<CodEntry> findFirstByFormula(String formula);
+
     List<CodEntry> findAllByFormula(String formula);
 
+    List<CodEntry> findAllByCodIdIn(List<String> codIds);
 }

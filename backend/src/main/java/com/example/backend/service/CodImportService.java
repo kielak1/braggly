@@ -12,6 +12,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,7 +47,6 @@ public class CodImportService {
         List<CodQuery> completed = codQueryRepository.findRecentCompletedQueries(cutoff);
         for (CodQuery q : completed) {
             Set<String> qSet = new HashSet<>(Arrays.asList(q.getElementSet().split(",")));
-            // Jeżeli zapytanie z bazy jest PODZBIOREM aktualnego zapytania — nie wystarcza
             if (requestedSet.containsAll(qSet)) {
                 return new CodQueryStatusResponse(true, false, true, q.getRequestedAt(), 100);
             }
@@ -71,16 +71,16 @@ public class CodImportService {
         return new CodQueryStatusResponse(false, true, false, null, 0);
     }
 
+    @Transactional
     public List<CodImportResult> importFromCod(List<String> elements, CodQuery query) {
         List<CodImportResult> results = new ArrayList<>();
         try {
-            // (jak dotąd)
             String baseUrl = "https://www.crystallography.net/cod/result.php";
             String queryParams = IntStream.range(0, elements.size())
                     .mapToObj(i -> "el" + (i + 1) + "=" + elements.get(i))
                     .collect(Collectors.joining("&"));
 
-            String fullUrl = baseUrl + "?" + queryParams + "&disp=1000&format=csv";
+            String fullUrl = baseUrl + "?" + queryParams + "&disp=1000000&format=csv";
             log.info("Pobieranie danych z COD: {}", fullUrl);
 
             URL url = new URL(fullUrl);
@@ -95,35 +95,21 @@ public class CodImportService {
                         String.join("\n", validLines),
                         CSVFormat.DEFAULT.withFirstRecordAsHeader());
 
-                int total = validLines.size();
-                int processed = 0;
+                Iterator<CSVRecord> iterator = csvParser.iterator();
+                List<CSVRecord> batch = new ArrayList<>();
+                int batchSize = 500;
 
-                for (CSVRecord record : csvParser) {
-                    String codId = record.get("file");
-                    String mineral = record.isMapped("mineral") ? record.get("mineral") : "";
-
-                    CodEntry entry = codEntryRepository.findByCodId(codId).orElse(new CodEntry());
-                    entry.setCodId(codId);
-                    entry.setMineralName(mineral);
-                    entry.setFormula(record.get("formula"));
-                    entry.setElements(record.get("compoundsource"));
-                    entry.setPublicationYear(record.get("year"));
-                    entry.setAuthors(record.get("authors"));
-                    entry.setJournal(record.get("journal"));
-                    entry.setDoi(record.get("doi"));
-                    entry.setDownloadUrl("https://www.crystallography.net/cod/" + codId + ".cif");
-                    entry.setLastUpdated(LocalDateTime.now());
-
-                    codEntryRepository.save(entry);
-                    results.add(new CodImportResult(codId, mineral));
-
-                    processed++;
-                    if (processed % 100 == 0 || processed == total) {
-                        int progress = (int) (((double) processed / total) * 100);
-                        query.setProgress(progress);
-                        codQueryRepository.save(query);
+                while (iterator.hasNext()) {
+                    batch.add(iterator.next());
+                    if (batch.size() >= batchSize) {
+                        processBatch(batch, results, query);
+                        batch.clear();
                     }
                 }
+                if (!batch.isEmpty()) {
+                    processBatch(batch, results, query);
+                }
+
                 log.info("Zakończono import z COD. Liczba rekordów: {}", results.size());
             }
 
@@ -138,4 +124,46 @@ public class CodImportService {
         return results;
     }
 
+    private void processBatch(List<CSVRecord> batch, List<CodImportResult> results, CodQuery query) {
+        List<String> codIds = batch.stream()
+                .map(r -> r.get("file"))
+                .collect(Collectors.toList());
+
+        Map<String, CodEntry> existingEntries = codEntryRepository.findAllByCodIdIn(codIds)
+                .stream()
+                .collect(Collectors.toMap(CodEntry::getCodId, e -> e));
+
+        List<CodEntry> toSave = new ArrayList<>();
+
+        for (CSVRecord record : batch) {
+            try {
+                String codId = record.get("file");
+                String mineral = record.isMapped("mineral") ? record.get("mineral") : "";
+
+                CodEntry entry = existingEntries.getOrDefault(codId, new CodEntry());
+                entry.setCodId(codId);
+                entry.setMineralName(mineral);
+                entry.setFormula(record.get("formula"));
+                entry.setElements(record.get("compoundsource"));
+                entry.setPublicationYear(record.get("year"));
+                entry.setAuthors(record.get("authors"));
+                entry.setJournal(record.get("journal"));
+                entry.setDoi(record.get("doi"));
+                entry.setDownloadUrl("https://www.crystallography.net/cod/" + codId + ".cif");
+                entry.setLastUpdated(LocalDateTime.now());
+
+                toSave.add(entry);
+                results.add(new CodImportResult(codId, mineral));
+            } catch (Exception e) {
+                log.warn("Błąd podczas parsowania rekordu CSV", e);
+            }
+        }
+
+        codEntryRepository.saveAll(toSave);
+
+        int totalSoFar = results.size();
+        int progress = (int) (((double) totalSoFar / 1000000.0) * 100);
+        query.setProgress(progress);
+        codQueryRepository.save(query);
+    }
 }
