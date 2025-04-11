@@ -111,6 +111,8 @@ public class CodImportService {
             log.info("Liczba rekordów do przetworzenia: {}", totalLines);
 
             Instant startProcessing = Instant.now();
+            Duration dbInteractionDuration = Duration.ZERO;
+
             try (BufferedReader reader = Files.newBufferedReader(tempFile, StandardCharsets.UTF_8)) {
                 CSVParser csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
 
@@ -122,16 +124,21 @@ public class CodImportService {
                 while (iterator.hasNext()) {
                     batch.add(iterator.next());
                     if (batch.size() >= batchSize) {
-                        processBatch(batch, results, query, processed, totalLines);
+                        dbInteractionDuration = dbInteractionDuration.plus(
+                                processBatch(batch, results, query, processed, totalLines));
                         processed += batch.size();
                         batch.clear();
                     }
                 }
                 if (!batch.isEmpty()) {
-                    processBatch(batch, results, query, processed, totalLines);
+                    dbInteractionDuration = dbInteractionDuration.plus(
+                            processBatch(batch, results, query, processed, totalLines));
                 }
+
                 log.info("[TIMER] Przetwarzanie pliku CSV trwało: {} sekund",
                         Duration.between(startProcessing, Instant.now()).toSeconds());
+                log.info("[TIMER] Łączny czas interakcji z bazą: {} sekund",
+                        dbInteractionDuration.toSeconds());
             }
 
             log.info("[TIMER] Łączny czas importu: {} sekund", Duration.between(startAll, Instant.now()).toSeconds());
@@ -157,8 +164,10 @@ public class CodImportService {
         return results;
     }
 
-    private void processBatch(List<CSVRecord> batch, List<CodImportResult> results, CodQuery query, int processedSoFar,
-            int totalLines) {
+    private Duration processBatch(List<CSVRecord> batch, List<CodImportResult> results,
+            CodQuery query, int processedSoFar, int totalLines) {
+        Instant dbStart = Instant.now();
+
         List<String> codIds = batch.stream()
                 .map(r -> r.get("file"))
                 .collect(Collectors.toList());
@@ -197,7 +206,8 @@ public class CodImportService {
 
         int totalSoFar = processedSoFar + batch.size();
         int progress = (int) (((double) totalSoFar / totalLines) * 100);
-        query.setProgress(progress);
         codQueryRepository.save(query);
+
+        return Duration.between(dbStart, Instant.now());
     }
 }
