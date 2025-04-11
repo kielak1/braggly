@@ -164,6 +164,8 @@ public class CodImportService {
         return results;
     }
 
+
+
     private Duration processBatch(List<CSVRecord> batch, List<CodImportResult> results,
             CodQuery query, int processedSoFar, int totalLines) {
         Duration dbDuration = Duration.ZERO;
@@ -172,12 +174,16 @@ public class CodImportService {
                 .map(r -> r.get("file"))
                 .collect(Collectors.toList());
 
+        // ⏱️ Pomiar: findAllByCodIdIn
         Instant dbStart = Instant.now();
         Map<String, CodEntry> existingEntries = codEntryRepository.findAllByCodIdIn(codIds)
                 .stream()
                 .collect(Collectors.toMap(CodEntry::getCodId, e -> e));
-        dbDuration = dbDuration.plus(Duration.between(dbStart, Instant.now()));
+        Duration findDuration = Duration.between(dbStart, Instant.now());
+        dbDuration = dbDuration.plus(findDuration);
+        log.info("[TIMER]   czas findAllByCodIdIn: {} ms", findDuration.toMillis());
 
+        // Budowanie obiektów (nie wliczane do DB)
         List<CodEntry> toSave = new ArrayList<>();
 
         for (CSVRecord record : batch) {
@@ -204,16 +210,22 @@ public class CodImportService {
             }
         }
 
+        // ⏱️ Pomiar: saveAll
         dbStart = Instant.now();
         codEntryRepository.saveAll(toSave);
-        dbDuration = dbDuration.plus(Duration.between(dbStart, Instant.now()));
+        Duration saveAllDuration = Duration.between(dbStart, Instant.now());
+        dbDuration = dbDuration.plus(saveAllDuration);
+        log.info("[TIMER]   czas saveAll: {} ms", saveAllDuration.toMillis());
 
         int totalSoFar = processedSoFar + batch.size();
         int progress = (int) (((double) totalSoFar / totalLines) * 100);
 
+        // ⏱️ Pomiar: save(query)
         dbStart = Instant.now();
         codQueryRepository.save(query);
-        dbDuration = dbDuration.plus(Duration.between(dbStart, Instant.now()));
+        Duration saveQueryDuration = Duration.between(dbStart, Instant.now());
+        dbDuration = dbDuration.plus(saveQueryDuration);
+        log.info("[TIMER]   czas save(query): {} ms", saveQueryDuration.toMillis());
 
         return dbDuration;
     }
