@@ -118,7 +118,7 @@ public class CodImportService {
 
                 Iterator<CSVRecord> iterator = csvParser.iterator();
                 List<CSVRecord> batch = new ArrayList<>();
-                int batchSize = 100;
+                int batchSize = 500;
                 int processed = 0;
 
                 while (iterator.hasNext()) {
