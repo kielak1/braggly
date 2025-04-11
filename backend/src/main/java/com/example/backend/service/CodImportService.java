@@ -95,7 +95,7 @@ public class CodImportService {
             Instant startDownload = Instant.now();
             try (BufferedReader in = new BufferedReader(
                     new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-                    BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+                 BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
 
                 String line;
                 while ((line = in.readLine()) != null) {
@@ -113,8 +113,6 @@ public class CodImportService {
             Instant startProcessing = Instant.now();
             Duration dbInteractionDuration = Duration.ZERO;
 
-            Duration dbInteractionDuration = Duration.ZERO;
-
             try (BufferedReader reader = Files.newBufferedReader(tempFile, StandardCharsets.UTF_8)) {
                 CSVParser csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
 
@@ -128,8 +126,6 @@ public class CodImportService {
                     if (batch.size() >= batchSize) {
                         dbInteractionDuration = dbInteractionDuration.plus(
                                 processBatch(batch, results, query, processed, totalLines));
-                        dbInteractionDuration = dbInteractionDuration.plus(
-                                processBatch(batch, results, query, processed, totalLines));
                         processed += batch.size();
                         batch.clear();
                     }
@@ -137,14 +133,10 @@ public class CodImportService {
                 if (!batch.isEmpty()) {
                     dbInteractionDuration = dbInteractionDuration.plus(
                             processBatch(batch, results, query, processed, totalLines));
-                    dbInteractionDuration = dbInteractionDuration.plus(
-                            processBatch(batch, results, query, processed, totalLines));
                 }
 
                 log.info("[TIMER] Przetwarzanie pliku CSV trwało: {} sekund",
                         Duration.between(startProcessing, Instant.now()).toSeconds());
-                log.info("[TIMER] Łączny czas interakcji z bazą: {} sekund",
-                        dbInteractionDuration.toSeconds());
                 log.info("[TIMER] Łączny czas interakcji z bazą: {} sekund",
                         dbInteractionDuration.toSeconds());
             }
@@ -172,13 +164,8 @@ public class CodImportService {
         return results;
     }
 
-    // private Duration processBatch(List<CSVRecord> batch, List<CodImportResult>
-    // results,
-    // CodQuery query, int processedSoFar, int totalLines) {
-    // Instant dbStart = Instant.now();
-
     private Duration processBatch(List<CSVRecord> batch, List<CodImportResult> results,
-            CodQuery query, int processedSoFar, int totalLines) {
+                                  CodQuery query, int processedSoFar, int totalLines) {
         Duration dbDuration = Duration.ZERO;
 
         List<String> codIds = batch.stream()
@@ -234,8 +221,6 @@ public class CodImportService {
         // ⏱️ Pomiar: save(query)
         dbStart = Instant.now();
         codQueryRepository.save(query);
-
-        return Duration.between(dbStart, Instant.now());
         Duration saveQueryDuration = Duration.between(dbStart, Instant.now());
         dbDuration = dbDuration.plus(saveQueryDuration);
         log.info("[TIMER]   czas save(query): {} ms", saveQueryDuration.toMillis());
