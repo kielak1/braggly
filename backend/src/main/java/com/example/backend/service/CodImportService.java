@@ -19,6 +19,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,6 +77,8 @@ public class CodImportService {
         List<CodImportResult> results = new ArrayList<>();
         Path tempFile = null;
 
+        Instant startAll = Instant.now();
+
         try {
             String baseUrl = "https://www.crystallography.net/cod/result.php";
             String queryParams = IntStream.range(0, elements.size())
@@ -88,6 +92,7 @@ public class CodImportService {
             tempFile = Files.createTempFile("cod_import", ".csv");
 
             int totalLines = 0;
+            Instant startDownload = Instant.now();
             try (BufferedReader in = new BufferedReader(
                     new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
                     BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
@@ -101,9 +106,11 @@ public class CodImportService {
                     }
                 }
             }
-
+            log.info("[TIMER] Pobieranie i zapis do pliku trwało: {} sekund",
+                    Duration.between(startDownload, Instant.now()).toSeconds());
             log.info("Liczba rekordów do przetworzenia: {}", totalLines);
 
+            Instant startProcessing = Instant.now();
             try (BufferedReader reader = Files.newBufferedReader(tempFile, StandardCharsets.UTF_8)) {
                 CSVParser csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
 
@@ -123,9 +130,12 @@ public class CodImportService {
                 if (!batch.isEmpty()) {
                     processBatch(batch, results, query, processed, totalLines);
                 }
-
-                log.info("Zakończono import z COD. Liczba rekordów: {}", results.size());
+                log.info("[TIMER] Przetwarzanie pliku CSV trwało: {} sekund",
+                        Duration.between(startProcessing, Instant.now()).toSeconds());
             }
+
+            log.info("[TIMER] Łączny czas importu: {} sekund", Duration.between(startAll, Instant.now()).toSeconds());
+            log.info("Zakończono import z COD. Liczba rekordów: {}", results.size());
 
         } catch (IOException e) {
             log.error("Błąd I/O podczas pobierania lub parsowania danych z COD", e);
