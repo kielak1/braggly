@@ -166,15 +166,17 @@ public class CodImportService {
 
     private Duration processBatch(List<CSVRecord> batch, List<CodImportResult> results,
             CodQuery query, int processedSoFar, int totalLines) {
-        Instant dbStart = Instant.now();
+        Duration dbDuration = Duration.ZERO;
 
         List<String> codIds = batch.stream()
                 .map(r -> r.get("file"))
                 .collect(Collectors.toList());
 
+        Instant dbStart = Instant.now();
         Map<String, CodEntry> existingEntries = codEntryRepository.findAllByCodIdIn(codIds)
                 .stream()
                 .collect(Collectors.toMap(CodEntry::getCodId, e -> e));
+        dbDuration = dbDuration.plus(Duration.between(dbStart, Instant.now()));
 
         List<CodEntry> toSave = new ArrayList<>();
 
@@ -202,12 +204,17 @@ public class CodImportService {
             }
         }
 
+        dbStart = Instant.now();
         codEntryRepository.saveAll(toSave);
+        dbDuration = dbDuration.plus(Duration.between(dbStart, Instant.now()));
 
         int totalSoFar = processedSoFar + batch.size();
         int progress = (int) (((double) totalSoFar / totalLines) * 100);
-        codQueryRepository.save(query);
 
-        return Duration.between(dbStart, Instant.now());
+        dbStart = Instant.now();
+        codQueryRepository.save(query);
+        dbDuration = dbDuration.plus(Duration.between(dbStart, Instant.now()));
+
+        return dbDuration;
     }
 }
