@@ -164,6 +164,8 @@ public class CodImportService {
         return results;
     }
 
+
+
     private Duration processBatch(List<CSVRecord> batch, List<CodImportResult> results,
                                   CodQuery query, int processedSoFar, int totalLines) {
         Duration dbDuration = Duration.ZERO;
