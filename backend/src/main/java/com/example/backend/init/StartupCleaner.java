@@ -5,12 +5,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import java.net.UnknownHostException;
 
 import javax.sql.DataSource;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.util.Map;
 
@@ -29,15 +29,10 @@ public class StartupCleaner {
     @Transactional
     public void onStartup() {
         cleanIncompleteQueries();
-      //  diagnoseDatabaseHost();
         diagnoseDatabaseFromUrl(); // ← adres publiczny z DATABASE_URL
         testInternalDatabaseHost(); // ← ręczny test hosta postgres.railway.internal
-      //  displayEnvVariables(); // ← lista zmiennych wyświetlana w init
-
-        diagnoseDatabaseFromUrl();         // ← adres publiczny z DATABASE_URL
-        testInternalDatabaseHost();        // ← ręczny test hosta postgres.railway.internal
-        printEnvVariables();
-        testDatabaseConnection();
+        printEnvVariables(); // ← wyświetlenie zmiennych środowiskowych
+        testDatabaseConnection(); // ← sprawdzenie połączenia z bazą danych
     }
 
     private void cleanIncompleteQueries() {
@@ -67,47 +62,14 @@ public class StartupCleaner {
             System.out.println("[StartupCleaner] Adres IP (IPv6/IPv4): " + address.getHostAddress());
 
             boolean reachable = address.isReachable(3000);
-
-            System.out.println("[StartupCleaner] Czy host osiągalny (ICMP ping lub TCP echo)? " + (reachable ? "TAK" : "NIE"));
-
-            try (Socket socket = new Socket(address, port)) {
-                System.out.println("[StartupCleaner] Port " + port + " OTWARTY na hoście " + host + ".");
-            } catch (Exception e) {
-                System.err.println("[StartupCleaner] Port " + port + " NIEOSIĄGALNY na hoście " + host + ": " + e.getMessage());
-            }
-
-        } catch (Exception e) {
-            System.err.println("[StartupCleaner] Błąd podczas przetwarzania DATABASE_URL: " + e.getMessage());
-        }
-    }
-
-    private void testInternalDatabaseHost() {
-        String internalHost = "postgres.railway.internal";
-        int port = 5432;
-
-        System.out.println("[StartupCleaner] Test wewnętrznego hosta Railway: " + internalHost + ":" + port);
-
-        try {
-            InetAddress address = InetAddress.getByName(internalHost);
-            System.out.println("[StartupCleaner] [internal] Rozwiązano adres IP: " + address.getHostAddress());
-
-            boolean reachable = address.isReachable(3000);
-            System.out.println("[StartupCleaner] [internal] ICMP ping: " + (reachable ? "TAK" : "NIE"));
-
-            try (Socket socket = new Socket(address, port)) {
-                System.out.println("[StartupCleaner] [internal] Port 5432 OTWARTY na hoście " + internalHost);
-            } catch (Exception e) {
-                System.err.println("[StartupCleaner] [internal] Port 5432 ZAMKNIĘTY na hoście " + internalHost + ": " + e.getMessage());
-            }
-
             System.out.println(
                     "[StartupCleaner] Czy host osiągalny (ICMP ping lub TCP echo)? " + (reachable ? "TAK" : "NIE"));
-            System.out.println("[StartupCleaner] Czy host osiągalny (ICMP ping lub TCP echo)? " + (reachable ? "TAK" : "NIE"));
 
             try (Socket socket = new Socket(address, port)) {
                 System.out.println("[StartupCleaner] Port " + port + " OTWARTY na hoście " + host + ".");
             } catch (Exception e) {
-                System.err.println("[StartupCleaner] Port " + port + " NIEOSIĄGALNY na hoście " + host + ": " + e.getMessage());
+                System.err.println(
+                        "[StartupCleaner] Port " + port + " NIEOSIĄGALNY na hoście " + host + ": " + e.getMessage());
             }
 
         } catch (Exception e) {
@@ -129,15 +91,10 @@ public class StartupCleaner {
             System.out.println("[StartupCleaner] [internal] ICMP ping: " + (reachable ? "TAK" : "NIE"));
 
             try (Socket socket = new Socket(address, port)) {
-                System.out.println("[StartupCleaner] [internal] Port 5432 OTWARTY na hoście " + internalHost);
+                System.out.println("[StartupCleaner] [internal] Port " + port + " OTWARTY na hoście " + internalHost);
             } catch (Exception e) {
-                System.err.println("[StartupCleaner] [internal] Port 5432 ZAMKNIĘTY na hoście " + internalHost + ": "
-                        + e.getMessage());
-            }
-
-        } catch (Exception e) {
-            System.err.println("[StartupCleaner] Błąd podczas przetwarzania DATABASE_URL: " + e.getMessage());
-                System.err.println("[StartupCleaner] [internal] Port 5432 ZAMKNIĘTY na hoście " + internalHost + ": " + e.getMessage());
+                System.err.println("[StartupCleaner] [internal] Port " + port + " ZAMKNIĘTY na hoście " + internalHost
+                        + ": " + e.getMessage());
             }
 
         } catch (UnknownHostException e) {
