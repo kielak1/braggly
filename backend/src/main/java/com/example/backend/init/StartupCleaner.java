@@ -11,7 +11,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.util.Map;
- 
+
 @Component
 public class StartupCleaner {
 
@@ -27,7 +27,12 @@ public class StartupCleaner {
     @Transactional
     public void onStartup() {
         cleanIncompleteQueries();
+<<<<<<< HEAD
         diagnoseDatabaseHost();
+=======
+        diagnoseDatabaseFromUrl(); // ← adres publiczny z DATABASE_URL
+        testInternalDatabaseHost(); // ← ręczny test hosta postgres.railway.internal
+>>>>>>> 307ae2c (lista zmiennych wyswietlana w init)
         printEnvVariables();
         testDatabaseConnection();
     }
@@ -47,7 +52,44 @@ public class StartupCleaner {
             System.out.println("[StartupCleaner] Adres IP (IPv6/IPv4): " + address.getHostAddress());
 
             boolean reachable = address.isReachable(3000);
+<<<<<<< HEAD
             System.out.println("[StartupCleaner] Czy host osiągalny (ping)? " + (reachable ? "TAK" : "NIE"));
+=======
+            System.out.println(
+                    "[StartupCleaner] Czy host osiągalny (ICMP ping lub TCP echo)? " + (reachable ? "TAK" : "NIE"));
+
+            try (Socket socket = new Socket(address, port)) {
+                System.out.println("[StartupCleaner] Port " + port + " OTWARTY na hoście " + host + ".");
+            } catch (Exception e) {
+                System.err.println(
+                        "[StartupCleaner] Port " + port + " NIEOSIĄGALNY na hoście " + host + ": " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            System.err.println("[StartupCleaner] Błąd podczas przetwarzania DATABASE_URL: " + e.getMessage());
+        }
+    }
+
+    private void testInternalDatabaseHost() {
+        String internalHost = "postgres.railway.internal";
+        int port = 5432;
+
+        System.out.println("[StartupCleaner] Test wewnętrznego hosta Railway: " + internalHost + ":" + port);
+
+        try {
+            InetAddress address = InetAddress.getByName(internalHost);
+            System.out.println("[StartupCleaner] [internal] Rozwiązano adres IP: " + address.getHostAddress());
+
+            boolean reachable = address.isReachable(3000);
+            System.out.println("[StartupCleaner] [internal] ICMP ping: " + (reachable ? "TAK" : "NIE"));
+
+            try (Socket socket = new Socket(address, port)) {
+                System.out.println("[StartupCleaner] [internal] Port 5432 OTWARTY na hoście " + internalHost);
+            } catch (Exception e) {
+                System.err.println("[StartupCleaner] [internal] Port 5432 ZAMKNIĘTY na hoście " + internalHost + ": "
+                        + e.getMessage());
+            }
+>>>>>>> 307ae2c (lista zmiennych wyswietlana w init)
 
         } catch (UnknownHostException e) {
             System.err.println("[StartupCleaner] Nie udało się rozwiązać hosta: " + host);
@@ -60,8 +102,8 @@ public class StartupCleaner {
         Map<String, String> env = System.getenv();
 
         String[] keys = {
-                "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB",
-                "POSTGRES_HOST", "POSTGRES_PORT", "DATABASE_URL"
+                "DATABASE_USER", "DATABASE_PASSWORD",
+                "ADMIN_USER", "DATABASE_URL"
         };
 
         System.out.println("[StartupCleaner] Wybrane zmienne środowiskowe:");
@@ -87,5 +129,5 @@ public class StartupCleaner {
         } catch (Exception e) {
             System.err.println("[StartupCleaner] Błąd przy łączeniu z bazą danych: " + e.getMessage());
         }
-    }
+    } 
 }
