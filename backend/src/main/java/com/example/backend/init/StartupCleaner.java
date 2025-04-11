@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.Socket;
+import java.net.URI;
 import java.sql.Connection;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class StartupCleaner {
     @Transactional
     public void onStartup() {
         cleanIncompleteQueries();
-        diagnoseDatabaseHost();
+        diagnoseDatabaseFromUrl();
         printEnvVariables();
         testDatabaseConnection();
     }
@@ -38,21 +39,39 @@ public class StartupCleaner {
         System.out.println("[StartupCleaner] Usunięto " + toDelete + " nieukończonych zapytań z tabeli cod_query.");
     }
 
-    private void diagnoseDatabaseHost() {
-        String host = "postgres.railway.internal";
-        System.out.println("[StartupCleaner] Próba rozwiązania hosta: " + host);
+    private void diagnoseDatabaseFromUrl() {
+        String jdbcUrl = System.getenv("DATABASE_URL");
+
+        if (jdbcUrl == null || jdbcUrl.isEmpty()) {
+            System.err.println("[StartupCleaner] Brak zmiennej środowiskowej DATABASE_URL.");
+            return;
+        }
 
         try {
+            String cleanUrl = jdbcUrl.replace("jdbc:", "");
+            URI uri = new URI(cleanUrl);
+
+            String host = uri.getHost();
+            int port = uri.getPort() != -1 ? uri.getPort() : 5432;
+
+            System.out.println("[StartupCleaner] DATABASE_URL wskazuje na host: " + host + ", port: " + port);
+
             InetAddress address = InetAddress.getByName(host);
             System.out.println("[StartupCleaner] Adres IP (IPv6/IPv4): " + address.getHostAddress());
 
             boolean reachable = address.isReachable(3000);
-            System.out.println("[StartupCleaner] Czy host osiągalny (ping)? " + (reachable ? "TAK" : "NIE"));
+            System.out.println(
+                    "[StartupCleaner] Czy host osiągalny (ICMP ping lub TCP echo)? " + (reachable ? "TAK" : "NIE"));
 
-        } catch (UnknownHostException e) {
-            System.err.println("[StartupCleaner] Nie udało się rozwiązać hosta: " + host);
+            try (Socket socket = new Socket(address, port)) {
+                System.out.println("[StartupCleaner] Port " + port + " OTWARTY na hoście " + host + ".");
+            } catch (Exception e) {
+                System.err.println(
+                        "[StartupCleaner] Port " + port + " NIEOSIĄGALNY na hoście " + host + ": " + e.getMessage());
+            }
+
         } catch (Exception e) {
-            System.err.println("[StartupCleaner] Błąd podczas sprawdzania dostępności hosta: " + e.getMessage());
+            System.err.println("[StartupCleaner] Błąd podczas przetwarzania DATABASE_URL: " + e.getMessage());
         }
     }
 
@@ -78,7 +97,7 @@ public class StartupCleaner {
     private void testDatabaseConnection() {
         System.out.println("[StartupCleaner] Próba nawiązania połączenia z bazą danych...");
         try (Connection conn = dataSource.getConnection()) {
-            boolean valid = conn.isValid(2); // sprawdzamy połączenie z timeoutem 2 sekundy
+            boolean valid = conn.isValid(2); // 2 sekundy timeout
             if (valid) {
                 System.out.println("[StartupCleaner] Połączenie z bazą danych nawiązane pomyślnie.");
             } else {
