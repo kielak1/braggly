@@ -95,7 +95,7 @@ public class CodImportService {
             Instant startDownload = Instant.now();
             try (BufferedReader in = new BufferedReader(
                     new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-                 BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+                    BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
 
                 String line;
                 while ((line = in.readLine()) != null) {
@@ -164,10 +164,8 @@ public class CodImportService {
         return results;
     }
 
-
-
     private Duration processBatch(List<CSVRecord> batch, List<CodImportResult> results,
-                                  CodQuery query, int processedSoFar, int totalLines) {
+            CodQuery query, int processedSoFar, int totalLines) {
         Duration dbDuration = Duration.ZERO;
 
         List<String> codIds = batch.stream()
@@ -217,8 +215,10 @@ public class CodImportService {
         dbDuration = dbDuration.plus(saveAllDuration);
         log.info("[TIMER]   czas saveAll: {} ms", saveAllDuration.toMillis());
 
+        // 🔄 Oblicz postęp i zaktualizuj `query`
         int totalSoFar = processedSoFar + batch.size();
         int progress = (int) (((double) totalSoFar / totalLines) * 100);
+        query.setProgress(progress); // ← 🔧 Kluczowa linia!
 
         // ⏱️ Pomiar: save(query)
         dbStart = Instant.now();
@@ -229,4 +229,5 @@ public class CodImportService {
 
         return dbDuration;
     }
+
 }
