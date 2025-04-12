@@ -5,13 +5,16 @@ import jakarta.transaction.Transactional;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import java.net.UnknownHostException;
 
 import javax.sql.DataSource;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Map;
 
 @Component
@@ -29,10 +32,12 @@ public class StartupCleaner {
     @Transactional
     public void onStartup() {
         cleanIncompleteQueries();
-        diagnoseDatabaseFromUrl(); // ← adres publiczny z DATABASE_URL
-        testInternalDatabaseHost(); // ← ręczny test hosta postgres.railway.internal
-        printEnvVariables(); // ← wyświetlenie zmiennych środowiskowych
-        testDatabaseConnection(); // ← sprawdzenie połączenia z bazą danych
+        diagnoseDatabaseFromUrl();
+        testInternalDatabaseHost();
+        printEnvVariables();
+        testDatabaseConnection();
+        printSystemDiagnostics();
+        printDatabaseVersion();
     }
 
     private void cleanIncompleteQueries() {
@@ -97,8 +102,6 @@ public class StartupCleaner {
                         + ": " + e.getMessage());
             }
 
-        } catch (UnknownHostException e) {
-            System.err.println("[StartupCleaner] [internal] Nie udało się rozwiązać hosta: " + internalHost);
         } catch (Exception e) {
             System.err.println("[StartupCleaner] [internal] Błąd przy sprawdzaniu: " + e.getMessage());
         }
@@ -126,7 +129,7 @@ public class StartupCleaner {
     private void testDatabaseConnection() {
         System.out.println("[StartupCleaner] Próba nawiązania połączenia z bazą danych...");
         try (Connection conn = dataSource.getConnection()) {
-            boolean valid = conn.isValid(2); // 2 sekundy timeout
+            boolean valid = conn.isValid(2);
             if (valid) {
                 System.out.println("[StartupCleaner] Połączenie z bazą danych nawiązane pomyślnie.");
             } else {
@@ -134,6 +137,28 @@ public class StartupCleaner {
             }
         } catch (Exception e) {
             System.err.println("[StartupCleaner] Błąd przy łączeniu z bazą danych: " + e.getMessage());
+        }
+    }
+
+    private void printSystemDiagnostics() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        System.out.println("[StartupCleaner] Parametry systemowe:");
+        System.out.println("  System: " + osBean.getName() + " " + osBean.getVersion());
+        System.out.println("  Architektura: " + osBean.getArch());
+        System.out.println("  Rdzenie CPU (available): " + Runtime.getRuntime().availableProcessors());
+        System.out.println("  Load average: " + osBean.getSystemLoadAverage());
+    }
+
+    private void printDatabaseVersion() {
+        try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery("SELECT version();")) {
+                if (rs.next()) {
+                    String version = rs.getString(1);
+                    System.out.println("[StartupCleaner] Wersja bazy danych: " + version);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[StartupCleaner] Nie udało się odczytać wersji bazy danych: " + e.getMessage());
         }
     }
 }
