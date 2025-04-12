@@ -78,6 +78,9 @@ public class CodImportService {
         Path tempFile = null;
 
         Instant startAll = Instant.now();
+        Duration totalFindAll = Duration.ZERO;
+        Duration totalSaveAll = Duration.ZERO;
+        Duration totalSaveQuery = Duration.ZERO;
 
         try {
             String baseUrl = "https://www.crystallography.net/cod/result.php";
@@ -96,7 +99,6 @@ public class CodImportService {
             try (BufferedReader in = new BufferedReader(
                     new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
                     BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
-
                 String line;
                 while ((line = in.readLine()) != null) {
                     if (!line.trim().startsWith("#")) {
@@ -104,14 +106,12 @@ public class CodImportService {
                         out.newLine();
                         totalLines++;
                     }
+
                 }
             }
             log.info("[TIMER] Pobieranie i zapis do pliku trwało: {} sekund",
                     Duration.between(startDownload, Instant.now()).toSeconds());
-            log.info("Liczba rekordów do przetworzenia: {}", totalLines);
-
-            Instant startProcessing = Instant.now();
-            Duration dbInteractionDuration = Duration.ZERO;
+            log.info("[TIMER] Liczba rekordów do przetworzenia: {}", totalLines);
 
             try (BufferedReader reader = Files.newBufferedReader(tempFile, StandardCharsets.UTF_8)) {
                 CSVParser csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
@@ -124,32 +124,30 @@ public class CodImportService {
                 while (iterator.hasNext()) {
                     batch.add(iterator.next());
                     if (batch.size() >= batchSize) {
-                        dbInteractionDuration = dbInteractionDuration.plus(
-                                processBatch(batch, results, query, processed, totalLines));
+                        Duration[] times = processBatch(batch, results, query, processed, totalLines);
+                        totalFindAll = totalFindAll.plus(times[0]);
+                        totalSaveAll = totalSaveAll.plus(times[1]);
+                        totalSaveQuery = totalSaveQuery.plus(times[2]);
                         processed += batch.size();
                         batch.clear();
                     }
                 }
-                if (!batch.isEmpty()) {
-                    dbInteractionDuration = dbInteractionDuration.plus(
-                            processBatch(batch, results, query, processed, totalLines));
-                }
 
-                log.info("[TIMER] Przetwarzanie pliku CSV trwało: {} sekund",
-                        Duration.between(startProcessing, Instant.now()).toSeconds());
-                log.info("[TIMER] Łączny czas interakcji z bazą: {} sekund",
-                        dbInteractionDuration.toSeconds());
+                if (!batch.isEmpty()) {
+                    Duration[] times = processBatch(batch, results, query, processed, totalLines);
+                    totalFindAll = totalFindAll.plus(times[0]);
+                    totalSaveAll = totalSaveAll.plus(times[1]);
+                    totalSaveQuery = totalSaveQuery.plus(times[2]);
+                }
             }
 
+            log.info("[TIMER] SUMA czasów findAllByCodIdIn: {} ms", totalFindAll.toMillis());
+            log.info("[TIMER] SUMA czasów saveAll: {} ms", totalSaveAll.toMillis());
+            log.info("[TIMER] SUMA czasów save(query): {} ms", totalSaveQuery.toMillis());
             log.info("[TIMER] Łączny czas importu: {} sekund", Duration.between(startAll, Instant.now()).toSeconds());
-            log.info("Zakończono import z COD. Liczba rekordów: {}", results.size());
 
-        } catch (IOException e) {
-            log.error("Błąd I/O podczas pobierania lub parsowania danych z COD", e);
-        } catch (IllegalArgumentException e) {
-            log.error("Błąd danych wejściowych lub brak nagłówków CSV", e);
         } catch (Exception e) {
-            log.error("Niespodziewany błąd podczas importu danych z COD", e);
+            log.error("Błąd podczas importu: ", e);
         } finally {
             if (tempFile != null) {
                 try {
@@ -164,32 +162,23 @@ public class CodImportService {
         return results;
     }
 
-    private Duration processBatch(List<CSVRecord> batch, List<CodImportResult> results,
+    private Duration[] processBatch(List<CSVRecord> batch, List<CodImportResult> results,
             CodQuery query, int processedSoFar, int totalLines) {
-        Duration dbDuration = Duration.ZERO;
 
-        List<String> codIds = batch.stream()
-                .map(r -> r.get("file"))
-                .collect(Collectors.toList());
+        List<String> codIds = batch.stream().map(r -> r.get("file")).toList();
 
-        // ⏱️ Pomiar: findAllByCodIdIn
-        Instant dbStart = Instant.now();
-        Map<String, CodEntry> existingEntries = codEntryRepository.findAllByCodIdIn(codIds)
-                .stream()
-                .collect(Collectors.toMap(CodEntry::getCodId, e -> e));
-        Duration findDuration = Duration.between(dbStart, Instant.now());
-        dbDuration = dbDuration.plus(findDuration);
-        log.info("[TIMER]   czas findAllByCodIdIn: {} ms", findDuration.toMillis());
+        Instant start = Instant.now();
+        Map<String, CodEntry> existing = codEntryRepository.findAllByCodIdIn(codIds)
+                .stream().collect(Collectors.toMap(CodEntry::getCodId, e -> e));
+        Duration findDuration = Duration.between(start, Instant.now());
 
-        // Budowanie obiektów (nie wliczane do DB)
         List<CodEntry> toSave = new ArrayList<>();
-
         for (CSVRecord record : batch) {
             try {
                 String codId = record.get("file");
                 String mineral = record.isMapped("mineral") ? record.get("mineral") : "";
+                CodEntry entry = existing.getOrDefault(codId, new CodEntry());
 
-                CodEntry entry = existingEntries.getOrDefault(codId, new CodEntry());
                 entry.setCodId(codId);
                 entry.setMineralName(mineral);
                 entry.setFormula(record.get("formula"));
@@ -204,30 +193,20 @@ public class CodImportService {
                 toSave.add(entry);
                 results.add(new CodImportResult(codId, mineral));
             } catch (Exception e) {
-                log.warn("Błąd podczas parsowania rekordu CSV", e);
+                log.warn("Błąd parsowania rekordu", e);
             }
         }
 
-        // ⏱️ Pomiar: saveAll
-        dbStart = Instant.now();
+        Instant saveStart = Instant.now();
         codEntryRepository.saveAll(toSave);
-        Duration saveAllDuration = Duration.between(dbStart, Instant.now());
-        dbDuration = dbDuration.plus(saveAllDuration);
-        log.info("[TIMER]   czas saveAll: {} ms", saveAllDuration.toMillis());
+        Duration saveAllDuration = Duration.between(saveStart, Instant.now());
 
-        // 🔄 Oblicz postęp i zaktualizuj `query`
-        int totalSoFar = processedSoFar + batch.size();
-        int progress = (int) (((double) totalSoFar / totalLines) * 100);
-        query.setProgress(progress); // ← 🔧 Kluczowa linia!
-
-        // ⏱️ Pomiar: save(query)
-        dbStart = Instant.now();
+        int progress = (int) (((double) (processedSoFar + batch.size()) / totalLines) * 100);
+        query.setProgress(progress);
+        Instant saveQueryStart = Instant.now();
         codQueryRepository.save(query);
-        Duration saveQueryDuration = Duration.between(dbStart, Instant.now());
-        dbDuration = dbDuration.plus(saveQueryDuration);
-        log.info("[TIMER]   czas save(query): {} ms", saveQueryDuration.toMillis());
+        Duration saveQueryDuration = Duration.between(saveQueryStart, Instant.now());
 
-        return dbDuration;
+        return new Duration[] { findDuration, saveAllDuration, saveQueryDuration };
     }
-
 }
