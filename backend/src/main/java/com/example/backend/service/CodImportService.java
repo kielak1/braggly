@@ -72,7 +72,7 @@ public class CodImportService {
         return new CodQueryStatusResponse(false, true, false, null, 0);
     }
 
-    @Transactional
+
     public List<CodImportResult> importFromCod(List<String> elements, CodQuery query) {
         List<CodImportResult> results = new ArrayList<>();
         Path tempFile = null;
@@ -164,6 +164,7 @@ public class CodImportService {
         return results;
     }
 
+    @Transactional
     private Duration[] processBatch(List<CSVRecord> batch, List<CodImportResult> results,
             CodQuery query, int processedSoFar, int totalLines) {
 
