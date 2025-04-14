@@ -30,7 +30,7 @@ public class CifInfoService {
     public Map<String, String> getStructureInfo(String codId) {
         String key = "cif/" + codId + ".cif";
         InputStream cifStream;
-
+        System.out.println("Attempting to download CIF file with key: " + key);
         try {
             cifStream = cloudStorageService.downloadFile(key);
         } catch (Exception ex) {

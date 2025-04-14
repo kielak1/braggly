@@ -74,7 +74,14 @@ public class CloudStorageService {
                                 .bucket(bucketName)
                                 .key(filename)
                                 .build();
-
+                try {
+                        s3Client.headObject(HeadObjectRequest.builder()
+                                        .bucket(bucketName)
+                                        .key(filename)
+                                        .build());
+                } catch (NoSuchKeyException e) {
+                        throw new IOException("File not found in cloud storage: " + filename, e);
+                }
                 // Pobieramy plik i zwracamy jego zawartość jako InputStream
                 return s3Client.getObject(request);
         }
