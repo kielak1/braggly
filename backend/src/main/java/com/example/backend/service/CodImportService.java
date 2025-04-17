@@ -149,7 +149,8 @@ public class CodImportService {
             log.info("[TIMER] Łączny czas importu: {} sekund", Duration.between(startAll, Instant.now()).toSeconds());
 
         } catch (Exception e) {
-            log.error("Błąd podczas importu: ", e);
+            log.error("Błąd podczas importu: ", e); // w takie sytuacji trzeba w przyszlosci dorobić kasowanie rekordu w
+                                                    // entry -TODO TO DO
         } finally {
             if (tempFile != null) {
                 try {
