@@ -37,14 +37,50 @@ public class OpenAiController {
 
     @PostMapping("/cod")
     public ResponseEntity<?> getCodFormula(@RequestBody String compoundName) {
-        String prompt = "Podaj wzór związku chemicznego w formacie akceptowanym przez wyszukiwarkę Crystallography Open Database (COD) "
-                + "oraz poprawną nazwę chemiczną (w języku angielskim) dla substancji o nazwie '" + compoundName.trim()
-                + "'. Odpowiedz wyłącznie w formacie JSON w postaci: { \"formula\": \"- A1 B2 ... NX -\", \"name\": \"nazwa\" }, "
-                + "gdzie A, B, ..., N to symbole pierwiastków chemicznych, a 1, 2, ..., X to liczby atomów. Wzór musi być otoczony spacjami i znakami '-' (dokładnie: '- ' przed pierwszym atomem i ' -' po ostatnim). "
-                + "Nigdy nie dawaj dwóch białych znaków po sobie. Nigdy niedawaja odstęppu pomiędzy symbolami pierwiastków i liczbami atomów. "
-                + "Jeżeli w odpowiedzi miałby być jeden atom danygo pierwiastka np. O1, N1, C1 to zawsze pomijaj liczbę 1 i pisz O, N, C"
-                + "Zawsze oddzielaj jedną spacją kolejne pierwiastki. Poorawny zapis to na przykład: '- C1 H2 O3 -'  Niepoprawnu zapis to: '-C1H2 O3-' lub 'C1H2O3' lub 'C1 H2 O3' lub 'C1 H2 O3 -' lub ' - C1 H2 O3 -' "
-                + "Przed pierwszym znakiem '-' nie może być żadnych znaków ani po ostatnim znaku '-' nie może być żadnych spacji. 'name' to poprawna nazwa chemiczna substancji. Nie dodawaj żadnych komentarzy ani dodatkowego tekstu.";
+
+        String prompt = """
+                Podaj wzór związku chemicznego i jego nazwę chemiczną (po angielsku) dla substancji o nazwie '%s'.
+                Odpowiedz TYLKO w formacie JSON, bez żadnych dodatkowych pól ani komentarzy:
+                {
+                  "formula": "- Aₓ Bᵧ … Vᵢ -",
+                  "name": "nazwa"
+                }
+
+                Zasady składni wzoru („formula”):
+                1. Zawsze zaczyna się od "- " i kończy na " -", bez żadnych znaków przed lub po.
+                2. Kolejne pary Symbol+Liczba atomów rozdziel pojedynczą spacją.
+                3. Jeśli atom występuje tylko raz, pomiń cyfrę 1 (np. "O" zamiast "O1", "C" zamiast "C1").
+                4. Nie stosuj dwóch spacji z rzędu ani spacji na początku lub końcu wzoru (poza wymaganymi "- " i " -").
+                5. Symbole pierwiastków zaczynaj wielką literą, np. "Na", "Cl", "O", "H".
+
+                UWAGA:
+                - Nie używaj grup chemicznych takich jak NH4, NO3, SO4, CO3 itp.
+                - Zawsze rozbijaj je na pojedyncze atomy pierwiastków i sumuj ich łączną liczbę w całej cząsteczce.
+                - Dla NH4NO3 (azotan amonu) poprawna formuła to: "- N2 H4 O3 -"
+                - Dla H2SO4 (kwas siarkowy) poprawna formuła to: "- H2 S O4 -"
+
+                Przykłady prawidłowych odpowiedzi:
+
+                {
+                  "formula": "- H2 O -",
+                  "name": "water"
+                }
+
+                {
+                  "formula": "- C3 H8 O3 -",
+                  "name": "glycerol"
+                }
+
+                {
+                  "formula": "- N2 H4 O3 -",
+                  "name": "ammonium nitrate"
+                }
+
+                {
+                  "formula": "- H2 S O4 -",
+                  "name": "sulfuric acid"
+                }
+                """.formatted(compoundName.trim());
 
         String response = openAiService.askOpenAi(prompt);
 

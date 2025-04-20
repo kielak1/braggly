@@ -1,8 +1,8 @@
+// OpenAiService.java
 package com.example.backend.service;
 
 import com.example.backend.dto.OpenAiRequest;
 import com.example.backend.dto.OpenAiResponse;
-
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,9 +13,13 @@ public class OpenAiService {
     private final WebClient webClient;
 
     public OpenAiService() {
+        String apiKey = System.getenv("OPEN_AI_KEY");
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException("Brak ustawionej zmiennej środowiskowej OPEN_AI_KEY");
+        }
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.openai.com/v1/chat/completions")
-                .defaultHeader("Authorization", "Bearer " + System.getenv("OPEN_AI_KEY"))
+                .defaultHeader("Authorization", "Bearer " + apiKey)
                 .build();
     }
 
