@@ -112,7 +112,7 @@ public class StartupCleaner {
 
         String[] keys = {
                 "DATABASE_USER", "DATABASE_PASSWORD",
-                "ADMIN_USER", "DATABASE_URL", "OPEN_AI_KEY", "OPENAI_MODEL", "OPENAI_TEMPERATURE",
+                "ADMIN_USER", "DATABASE_URL", "OPEN_AI_KEY", "OPENAI_MODEL", "OPENAI_TEMPERATURE", "OPENAI_MAX_TOKENS"
         };
 
         System.out.println("[StartupCleaner] Wybrane zmienne środowiskowe:");
