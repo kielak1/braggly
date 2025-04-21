@@ -17,7 +17,8 @@ public class CodCifController {
     }
 
     @GetMapping("/{codId}")
-    public ResponseEntity<Map<String, String>> getCifInfo(@PathVariable String codId) {
+    public ResponseEntity<Map<String, Object>> getCifInfo(@PathVariable String codId) {
+        System.out.println("[DEBUG] Endpoint /api/cod/cif/" + codId + " wywołany.");
         return ResponseEntity.ok(cifInfoService.getStructureInfo(codId));
     }
 }
