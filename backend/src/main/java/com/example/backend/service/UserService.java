@@ -61,7 +61,7 @@ public class UserService {
         if (userRepository.findByUsername("admin").isEmpty()) {
             User admin = new User("admin", passwordEncoder.encode("admin"), User.Role.ADMIN);
             userRepository.save(admin);
-            System.out.println("Admin user created with default password 'admin'");
+            System.out.println("Admin user created");
         }
     }
 

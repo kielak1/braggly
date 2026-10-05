@@ -34,7 +34,7 @@ public class StartupCleaner {
         cleanIncompleteQueries();
         diagnoseDatabaseFromUrl();
         testInternalDatabaseHost();
-        printEnvVariables();
+        printEnvVariables(System.getenv());
         testDatabaseConnection();
         printSystemDiagnostics();
         printDatabaseVersion();
@@ -74,11 +74,11 @@ public class StartupCleaner {
                 System.out.println("[StartupCleaner] Port " + port + " OTWARTY na hoście " + host + ".");
             } catch (Exception e) {
                 System.err.println(
-                        "[StartupCleaner] Port " + port + " NIEOSIĄGALNY na hoście " + host + ": " + e.getMessage());
+                        "[StartupCleaner] Port " + port + " NIEOSIĄGALNY na hoście " + host + ": " + e.getClass().getSimpleName());
             }
 
         } catch (Exception e) {
-            System.err.println("[StartupCleaner] Błąd podczas przetwarzania DATABASE_URL: " + e.getMessage());
+            System.err.println("[StartupCleaner] Błąd podczas przetwarzania DATABASE_URL: " + e.getClass().getSimpleName());
         }
     }
 
@@ -99,16 +99,15 @@ public class StartupCleaner {
                 System.out.println("[StartupCleaner] [internal] Port " + port + " OTWARTY na hoście " + internalHost);
             } catch (Exception e) {
                 System.err.println("[StartupCleaner] [internal] Port " + port + " ZAMKNIĘTY na hoście " + internalHost
-                        + ": " + e.getMessage());
+                        + ": " + e.getClass().getSimpleName());
             }
 
         } catch (Exception e) {
-            System.err.println("[StartupCleaner] [internal] Błąd przy sprawdzaniu: " + e.getMessage());
+            System.err.println("[StartupCleaner] [internal] Błąd przy sprawdzaniu: " + e.getClass().getSimpleName());
         }
     }
 
-    private void printEnvVariables() {
-        Map<String, String> env = System.getenv();
+    void printEnvVariables(Map<String, String> env) {
 
         String[] keys = {
                 "DATABASE_USER", "DATABASE_PASSWORD",
@@ -118,11 +117,8 @@ public class StartupCleaner {
         System.out.println("[StartupCleaner] Wybrane zmienne środowiskowe:");
         for (String key : keys) {
             String value = env.get(key);
-            if (value != null) {
-                System.out.println("  " + key + " = " + value);
-            } else {
-                System.out.println("  " + key + " nie jest ustawiona");
-            }
+            boolean configured = value != null && !value.isBlank();
+            System.out.println("  " + key + " configured: " + configured);
         }
     }
 
@@ -136,7 +132,7 @@ public class StartupCleaner {
                 System.err.println("[StartupCleaner] Połączenie z bazą danych jest nieprawidłowe.");
             }
         } catch (Exception e) {
-            System.err.println("[StartupCleaner] Błąd przy łączeniu z bazą danych: " + e.getMessage());
+            System.err.println("[StartupCleaner] Błąd przy łączeniu z bazą danych: " + e.getClass().getSimpleName());
         }
     }
 
@@ -158,7 +154,7 @@ public class StartupCleaner {
                 }
             }
         } catch (Exception e) {
-            System.err.println("[StartupCleaner] Nie udało się odczytać wersji bazy danych: " + e.getMessage());
+            System.err.println("[StartupCleaner] Nie udało się odczytać wersji bazy danych: " + e.getClass().getSimpleName());
         }
     }
 }

@@ -19,16 +19,15 @@ public class DebugController {
 
     @GetMapping("/env")
     public Map<String, String> environmentVariables() {
+        return environmentVariables(System.getenv());
+    }
+
+    Map<String, String> environmentVariables(Map<String, String> environment) {
         Map<String, String> filtered = new LinkedHashMap<>();
-        System.getenv().forEach((key, value) -> {
+        environment.forEach((key, value) -> {
             if (key.startsWith("SERVER_") || key.startsWith("DATABASE_URL")) {
-                filtered.put(key, value);
+                filtered.put(key, "configured: " + (value != null && !value.isBlank()));
             }
-            // if (key.startsWith("SERVER_") || key.startsWith("DATABASE_") ||
-            // key.startsWith("STRIPE_") || key.startsWith("JWT") ||
-            // key.startsWith("GOOGLE_")) {
-            // filtered.put(key, value);
-            // }
         });
         return filtered;
     }

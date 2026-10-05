@@ -38,7 +38,6 @@ public class AuthenticationIntegrationTest {
 
         token = (String) response.getBody().get("token");
         assertNotNull(token);
-        System.out.println("✅ Token pobrany: " + token);
     }
 
     @Test
@@ -74,7 +73,6 @@ public class AuthenticationIntegrationTest {
             ResponseEntity<String> response = restTemplate.exchange("/api/admin/create-user", HttpMethod.POST, request, String.class);
 
             // 4. Debugowanie wyniku
-            System.out.println("🔑 Token: " + token);
             System.out.println("📡 Otrzymany status: " + response.getStatusCode());
             System.out.println("📡 Otrzymana odpowiedź: " + response.getBody());
 
@@ -100,7 +98,6 @@ public class AuthenticationIntegrationTest {
         ResponseEntity<String> response = restTemplate.exchange("/api/admin/delete-user?username=testuser", HttpMethod.DELETE, request, String.class);
 
         // 3. Debugowanie wyniku
-        System.out.println("🔑 Token: " + token);
         System.out.println("📡 Otrzymany status: " + response.getStatusCode());
         System.out.println("📡 Otrzymana odpowiedź: " + response.getBody());
 
@@ -121,7 +118,6 @@ public class AuthenticationIntegrationTest {
         ResponseEntity<String> response = restTemplate.exchange("/api/admin/delete-user?username=nonexistent", HttpMethod.DELETE, request, String.class);
 
         // 3. Debugowanie wyniku
-        System.out.println("🔑 Token: " + token);
         System.out.println("📡 Otrzymany status: " + response.getStatusCode());
         System.out.println("📡 Otrzymana odpowiedź: " + response.getBody());
 

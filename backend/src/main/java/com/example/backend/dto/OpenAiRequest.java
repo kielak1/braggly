@@ -9,6 +9,7 @@ public class OpenAiRequest {
     private List<Map<String, String>> messages;
     private Double temperature;
     private Integer max_tokens;
+    private final boolean store = false;
 
     public OpenAiRequest(String prompt) {
         // Pobieramy wartości z zmiennych środowiskowych
@@ -31,6 +32,10 @@ public class OpenAiRequest {
 
     public Double getTemperature() {
         return temperature;
+    }
+
+    public boolean getStore() {
+        return store;
     }
 
     public Integer getMax_tokens() {

@@ -1,0 +1,24 @@
+// Synthetic credentials for isolated security tests; never use with production data.
+allprojects {
+    tasks.withType(Test).configureEach {
+        environment 'OPEN_AI_KEY', 'synthetic-openai-credential'
+        environment 'OPENAI_MODEL', 'gpt-4.1'
+        environment 'OPENAI_TEMPERATURE', '0.1'
+        environment 'OPENAI_MAX_TOKENS', '300'
+        environment 'SERVER_PORT', '0'
+        environment 'DATABASE_URL', 'jdbc:postgresql://synthetic-user:synthetic-password@127.0.0.1:1/test'
+        environment 'DATABASE_USER', 'synthetic-user'
+        environment 'DATABASE_PASSWORD', 'synthetic-database-password'
+        environment 'ADMIN_USER', 'synthetic-admin'
+        environment 'ADMIN_PASSWORD', 'synthetic-admin-password'
+        environment 'SECRET_STRIPE', 'synthetic-stripe-credential'
+        environment 'STRIPE_WEBHOOK_SECRET', 'synthetic-webhook-credential'
+        environment 'JWT_SECRET', 'c3ludGhldGljLXRlc3Qta2V5LXdpdGgtMzItYnl0ZXM='
+        environment 'B2_BUCKET_NAME', 'synthetic-bucket'
+        environment 'B2_ENDPOINT', 'https://127.0.0.1:1'
+        environment 'B2_REGION', 'eu-central-003'
+        environment 'B2_ACCESS_KEY', 'synthetic-access-key'
+        environment 'B2_SECRET_KEY', 'synthetic-storage-credential'
+        environment 'LOGGING_FILE', ''
+    }
+}
