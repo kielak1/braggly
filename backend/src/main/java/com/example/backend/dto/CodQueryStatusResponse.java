@@ -1,13 +1,15 @@
 package com.example.backend.dto;
 
 import java.time.LocalDateTime;
+import com.example.backend.model.CodQueryStatus;
 
 public class CodQueryStatusResponse {
     private boolean alreadyQueried;
     private boolean queryRunning;
     private boolean completed;
     private LocalDateTime lastCompleted;
-    private int progress; 
+    private int progress;
+    private CodQueryStatus status;
 
     public CodQueryStatusResponse(boolean alreadyQueried, boolean queryRunning, boolean completed,
             LocalDateTime lastCompleted, int progress) {
@@ -16,6 +18,19 @@ public class CodQueryStatusResponse {
         this.completed = completed;
         this.lastCompleted = lastCompleted;
         this.progress = progress;
+        this.status = completed ? CodQueryStatus.COMPLETED : CodQueryStatus.PENDING;
+    }
+
+    public CodQueryStatusResponse(CodQueryStatus status, LocalDateTime requestedAt, int progress) {
+        this(status == CodQueryStatus.COMPLETED,
+                status == CodQueryStatus.PENDING || status == CodQueryStatus.RUNNING,
+                status == CodQueryStatus.COMPLETED,
+                status == CodQueryStatus.COMPLETED ? requestedAt : null, progress);
+        this.status = status;
+    }
+
+    public CodQueryStatus getStatus() {
+        return status;
     }
 
     // Możesz zostawić poprzedni konstruktor, jeśli jest używany gdzieś indziej

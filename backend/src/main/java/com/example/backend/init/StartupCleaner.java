@@ -41,9 +41,8 @@ public class StartupCleaner {
     }
 
     private void cleanIncompleteQueries() {
-        long toDelete = codQueryRepository.countByCompletedFalse();
-        codQueryRepository.deleteByCompletedFalse();
-        System.out.println("[StartupCleaner] Usunięto " + toDelete + " nieukończonych zapytań z tabeli cod_query.");
+        int interrupted = codQueryRepository.failInterruptedQueries();
+        System.out.println("[StartupCleaner] Oznaczono jako FAILED " + interrupted + " przerwanych importów COD.");
     }
 
     private void diagnoseDatabaseFromUrl() {

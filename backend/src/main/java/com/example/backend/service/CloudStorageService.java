@@ -10,7 +10,8 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
-import java.io.ByteArrayOutputStream;
+import jakarta.annotation.PreDestroy;
+import java.nio.file.Path;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -55,8 +56,9 @@ public class CloudStorageService {
                                 .contentType(file.getContentType())
                                 .build();
 
-                s3Client.putObject(request, RequestBody.fromInputStream(
-                                file.getInputStream(), file.getSize()));
+                try (InputStream stream = file.getInputStream()) {
+                        s3Client.putObject(request, RequestBody.fromInputStream(stream, file.getSize()));
+                }
         }
 
         public void deleteFile(String filename) {
@@ -86,26 +88,16 @@ public class CloudStorageService {
                 return s3Client.getObject(request);
         }
 
-        public void uploadInputStream(String filename, InputStream inputStream) {
-                try {
-                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                        byte[] data = new byte[8192];
-                        int nRead;
-                        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-                                buffer.write(data, 0, nRead);
-                        }
-                        byte[] bytes = buffer.toByteArray();
+        /** Uploads a disk-backed body with known length; the caller owns and deletes the file. */
+        public void uploadFile(String filename, Path file) {
+                PutObjectRequest request = PutObjectRequest.builder()
+                                .bucket(bucketName).key(filename).contentType("text/plain").build();
+                s3Client.putObject(request, RequestBody.fromFile(file));
+        }
 
-                        PutObjectRequest request = PutObjectRequest.builder()
-                                        .bucket(bucketName)
-                                        .key(filename)
-                                        .contentType("text/plain")
-                                        .build();
-
-                        s3Client.putObject(request, RequestBody.fromBytes(bytes));
-                } catch (IOException e) {
-                        throw new RuntimeException("Błąd podczas przesyłania pliku do B2", e);
-                }
+        @PreDestroy
+        public void close() {
+                if (s3Client != null) s3Client.close();
         }
 
 }

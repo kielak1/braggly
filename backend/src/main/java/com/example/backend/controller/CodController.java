@@ -36,11 +36,12 @@ public class CodController {
     }
 
     @PostMapping("/search")
-    public CodQueryStatusResponse searchOrPoll(@RequestBody String body) {
+    public CodQueryStatusResponse searchOrPoll(@RequestBody String body,
+            @RequestParam(defaultValue = "false") boolean retry) {
         List<String> elements = Arrays.stream(body.trim().split("\\s+"))
                 .filter(s -> !s.isBlank())
                 .collect(Collectors.toList());
-        return codImportService.checkAndImport(elements);
+        return codImportService.checkAndImport(elements, retry);
     }
 
     @GetMapping("/id")

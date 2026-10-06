@@ -13,6 +13,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 
 import javax.sql.DataSource;
+import jakarta.persistence.EntityManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -23,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
                 + "org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration",
         "logging.file.name="
 })
-@MockBean({DataSource.class, CodQueryRepository.class, CodEntryRepository.class,
+@MockBean({DataSource.class, EntityManager.class, PlatformTransactionManager.class, CodQueryRepository.class, CodEntryRepository.class,
         CreditPackageRepository.class, CreditPurchaseHistoryRepository.class,
         CreditUsageHistoryRepository.class, ParametersBoolRepository.class,
         RestrictedPathRepository.class, UserCreditsRepository.class,

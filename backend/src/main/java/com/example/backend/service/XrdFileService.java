@@ -109,7 +109,7 @@ public class XrdFileService {
     // 🔍 Parsowanie nagłówka UXD
     private XrdFile parseHeader(InputStream stream) throws IOException {
         XrdFile xrd = new XrdFile();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
         String line;
         while ((line = reader.readLine()) != null) {
             if (line.trim().matches("^\\d"))
@@ -141,6 +141,7 @@ public class XrdFileService {
                 xrd.setStepSize(parseDouble(line));
             else if (line.startsWith("_KV="))
                 xrd.setKv(parseInt(line));
+        }
         }
         return xrd;
     }

@@ -5,4 +5,4 @@ nixPkgs = ["openjdk21"]
 cmds = ["./gradlew clean build -x check -x test"]
 
 [start]
-cmd = "java -jar build/libs/braggly.jar"
+cmd = "java -XX:ActiveProcessorCount=2 -Xms32m -Xmx512m -XX:+UseG1GC -jar build/libs/braggly.jar"

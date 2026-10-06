@@ -1,216 +1,286 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.CodImportResult;
 import com.example.backend.dto.CodQueryStatusResponse;
 import com.example.backend.model.CodEntry;
 import com.example.backend.model.CodQuery;
+import com.example.backend.model.CodQueryStatus;
 import com.example.backend.repository.CodEntryRepository;
 import com.example.backend.repository.CodQueryRepository;
+import jakarta.annotation.PreDestroy;
+import jakarta.persistence.EntityManager;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.*;
-import java.net.URL;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class CodImportService {
-
     private static final Logger log = LoggerFactory.getLogger(CodImportService.class);
+    private final CodEntryRepository entries;
+    private final CodQueryRepository queries;
+    private final CodCsvSource source;
+    private final EntityManager entityManager;
+    private final TransactionTemplate batchTransaction;
+    private final TransactionTemplate statusTransaction;
+    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS,
+            new ArrayBlockingQueue<>(2), runnable -> {
+                Thread thread = new Thread(runnable, "cod-import");
+                thread.setDaemon(true);
+                return thread;
+            }, new ThreadPoolExecutor.AbortPolicy());
+    // At most three admitted jobs. Failed terminal writes stay here until DB recovery.
+    private final Map<String, ImportJob> admitted = new HashMap<>();
+    private final ScheduledExecutorService statusRecovery = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "cod-status-recovery");
+        thread.setDaemon(true);
+        return thread;
+    });
+    private boolean recoveryScheduled;
+    private boolean stopping;
+    private final int batchSize;
 
-    private final CodEntryRepository codEntryRepository;
-    private final CodQueryRepository codQueryRepository;
-
-    public CodImportService(CodEntryRepository codEntryRepository, CodQueryRepository codQueryRepository) {
-        this.codEntryRepository = codEntryRepository;
-        this.codQueryRepository = codQueryRepository;
+    public CodImportService(CodEntryRepository entries, CodQueryRepository queries, CodCsvSource source,
+            EntityManager entityManager, PlatformTransactionManager transactions,
+            @Value("${cod.import.batch-size:500}") int batchSize) {
+        if (batchSize < 1 || batchSize > 10000) throw new IllegalArgumentException("Invalid COD batch size");
+        this.entries = entries;
+        this.queries = queries;
+        this.source = source;
+        this.entityManager = entityManager;
+        this.batchSize = batchSize;
+        batchTransaction = new TransactionTemplate(transactions);
+        statusTransaction = new TransactionTemplate(transactions);
+        statusTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
     public CodQueryStatusResponse checkAndImport(List<String> elements) {
-        Set<String> requestedSet = new HashSet<>(elements);
-        String normalizedKey = elements.stream().sorted().collect(Collectors.joining(","));
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime cutoff = now.minusHours(240);
-
-        List<CodQuery> completed = codQueryRepository.findRecentCompletedQueries(cutoff);
-        for (CodQuery q : completed) {
-            Set<String> qSet = new HashSet<>(Arrays.asList(q.getElementSet().split(",")));
-            if (requestedSet.containsAll(qSet)) {
-                return new CodQueryStatusResponse(true, false, true, q.getRequestedAt(), 100);
-            }
-        }
-
-        List<CodQuery> pending = codQueryRepository.findRecentPendingQueries(cutoff);
-        for (CodQuery q : pending) {
-            if (q.getElementSet().equals(normalizedKey)) {
-                return new CodQueryStatusResponse(false, true, false, null, q.getProgress());
-            }
-        }
-
-        CodQuery newQuery = new CodQuery(normalizedKey, now, false);
-        codQueryRepository.save(newQuery);
-
-        new Thread(() -> {
-            importFromCod(elements, newQuery);
-            newQuery.setCompleted(true);
-            codQueryRepository.save(newQuery);
-        }).start();
-
-        return new CodQueryStatusResponse(false, true, false, null, 0);
+        return checkAndImport(elements, false);
     }
 
-
-    public List<CodImportResult> importFromCod(List<String> elements, CodQuery query) {
-        List<CodImportResult> results = new ArrayList<>();
-        Path tempFile = null;
-
-        Instant startAll = Instant.now();
-        Duration totalFindAll = Duration.ZERO;
-        Duration totalSaveAll = Duration.ZERO;
-        Duration totalSaveQuery = Duration.ZERO;
-
+    // Admission, normalized-key deduplication and enqueue are one atomic operation.
+    // The production service is a single replica; this lock does not coordinate replicas.
+    public synchronized CodQueryStatusResponse checkAndImport(List<String> elements, boolean retry) {
+        List<String> normalized = elements.stream().map(String::trim).distinct().sorted().toList();
+        if (normalized.isEmpty() || normalized.stream().anyMatch(e -> !e.matches("[A-Z][a-z]?"))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid element set");
+        }
+        String key = String.join(",", normalized);
+        flushTerminalStates();
+        ImportJob existingJob = admitted.get(key);
+        if (existingJob != null) return response(existingJob.query);
+        if (stopping) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "COD importer stopping");
+        LocalDateTime cutoff = LocalDateTime.now().minusHours(240);
+        Set<String> requested = new HashSet<>(normalized);
+        for (CodQuery query : queries.findRecentCompletedQueries(cutoff)) {
+            if (requested.containsAll(query.getElementsList())) return response(query);
+        }
+        Optional<CodQuery> previous = queries.findFirstByElementSetAndRequestedAtAfterOrderByRequestedAtDesc(key, cutoff);
+        if (previous.isPresent() && previous.get().getStatus() == CodQueryStatus.FAILED && !retry) {
+            return response(previous.get());
+        }
+        if (admitted.size() >= 3) {
+            CodQuery rejected = new CodQuery(key, LocalDateTime.now(), false);
+            rejected.setStatus(CodQueryStatus.FAILED);
+            statusTransaction.executeWithoutResult(status -> queries.saveAndFlush(rejected));
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "COD import queue is full");
+        }
+        CodQuery query = queries.save(new CodQuery(key, LocalDateTime.now(), false));
+        ImportJob job = new ImportJob(normalized, query);
         try {
-            String baseUrl = "https://www.crystallography.net/cod/result.php";
-            String queryParams = IntStream.range(0, elements.size())
-                    .mapToObj(i -> "el" + (i + 1) + "=" + elements.get(i))
-                    .collect(Collectors.joining("&"));
+            admitted.put(key, job);
+            executor.execute(job);
+        } catch (RejectedExecutionException rejected) {
+            // Persist rejection too: it must never remain PENDING.
+            query.setStatus(CodQueryStatus.FAILED);
+            if (saveStatus(query)) admitted.remove(key, job);
+            else scheduleStatusRecovery();
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "COD import queue is full");
+        }
+        return response(query);
+    }
 
-            String fullUrl = baseUrl + "?" + queryParams + "&disp=1000000&format=csv";
-            log.info("Pobieranie danych z COD: {}", fullUrl);
+    private CodQueryStatusResponse response(CodQuery query) {
+        return new CodQueryStatusResponse(query.getStatus(), query.getRequestedAt(), query.getProgress());
+    }
 
-            URL url = new URL(fullUrl);
-            tempFile = Files.createTempFile("cod_import", ".csv");
-
-            int totalLines = 0;
-            Instant startDownload = Instant.now();
-            try (BufferedReader in = new BufferedReader(
-                    new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-                    BufferedWriter out = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
-                String line;
-                while ((line = in.readLine()) != null) {
-                    if (!line.trim().startsWith("#")) {
-                        out.write(line);
-                        out.newLine();
-                        totalLines++;
-                    }
-
-                }
+    private boolean saveStatus(CodQuery query) {
+        for (int attempt = 0; attempt < 3; attempt++) {
+            try {
+                statusTransaction.executeWithoutResult(status -> queries.saveAndFlush(query));
+                return true;
+            } catch (RuntimeException failure) {
+                log.warn("COD status persistence failed for job {} ({})", query.getId(), failure.getClass().getSimpleName());
             }
-            log.info("[TIMER] Pobieranie i zapis do pliku trwało: {} sekund",
-                    Duration.between(startDownload, Instant.now()).toSeconds());
-            log.info("[TIMER] Liczba rekordów do przetworzenia: {}", totalLines);
+        }
+        return false;
+    }
 
-            try (BufferedReader reader = Files.newBufferedReader(tempFile, StandardCharsets.UTF_8)) {
-                CSVParser csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader());
+    private void flushTerminalStates() {
+        admitted.values().removeIf(job -> job.terminal() && saveStatus(job.query));
+        // No new work is admitted while a terminal status cannot be persisted.
+        if (admitted.values().stream().anyMatch(ImportJob::terminal)) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "COD status database unavailable");
+        }
+    }
 
-                Iterator<CSVRecord> iterator = csvParser.iterator();
-                List<CSVRecord> batch = new ArrayList<>();
-                int batchSize = 500;
-                int processed = 0;
-                log.info(String.format("[IMPORT] Batch size = %d", batchSize));
+    private synchronized void finish(ImportJob job, CodQueryStatus status) {
+        if (stopping) status = CodQueryStatus.FAILED;
+        job.query.setStatus(status);
+        if (status == CodQueryStatus.COMPLETED) job.query.setProgress(100);
+        if (saveStatus(job.query)) admitted.remove(job.query.getElementSet(), job);
+        else {
+            job.query.setStatus(CodQueryStatus.FAILED);
+            scheduleStatusRecovery();
+        }
+    }
 
+    private void scheduleStatusRecovery() {
+        if (stopping || recoveryScheduled) return;
+        recoveryScheduled = true;
+        // At most one scheduled retry, and at most three retained terminal records.
+        statusRecovery.schedule(() -> {
+            synchronized (CodImportService.this) {
+                recoveryScheduled = false;
+                admitted.values().removeIf(job -> job.terminal() && saveStatus(job.query));
+                if (admitted.values().stream().anyMatch(ImportJob::terminal)) scheduleStatusRecovery();
+            }
+        }, 5, TimeUnit.SECONDS);
+    }
 
-                while (iterator.hasNext()) {
-                    batch.add(iterator.next());
-                    if (batch.size() >= batchSize) {
-                        Duration[] times = processBatch(batch, results, query, processed, totalLines);
-                        totalFindAll = totalFindAll.plus(times[0]);
-                        totalSaveAll = totalSaveAll.plus(times[1]);
-                        totalSaveQuery = totalSaveQuery.plus(times[2]);
-                        processed += batch.size();
+    private final class ImportJob implements Runnable {
+        private final List<String> elements;
+        private final CodQuery query;
+        private ImportJob(List<String> elements, CodQuery query) {
+            this.elements = elements;
+            this.query = query;
+        }
+        private boolean terminal() {
+            return query.getStatus() == CodQueryStatus.COMPLETED || query.getStatus() == CodQueryStatus.FAILED;
+        }
+        @Override public void run() {
+            try {
+                synchronized (CodImportService.this) {
+                    if (stopping) throw new CancellationException("COD importer stopping");
+                    query.setStatus(CodQueryStatus.RUNNING);
+                    if (!saveStatus(query)) throw new IllegalStateException("Cannot persist running status");
+                }
+                importFromCod(elements, query);
+                checkInterrupted();
+                finish(this, CodQueryStatus.COMPLETED);
+            } catch (Exception failure) {
+                log.error("COD import {} failed ({})", query.getId(), failure.getClass().getSimpleName());
+                finish(this, CodQueryStatus.FAILED);
+            }
+        }
+    }
+
+    private void importFromCod(List<String> elements, CodQuery query) throws IOException {
+        Path csv = source.download(elements);
+        long processed = 0;
+        long inserted = 0;
+        long updated = 0;
+        long skipped = 0;
+        try {
+            long total;
+            try (var lines = Files.lines(csv, StandardCharsets.UTF_8)) {
+                total = Math.max(1, lines.count() - 1);
+            }
+            try (var reader = Files.newBufferedReader(csv, StandardCharsets.UTF_8);
+                    CSVParser parser = CSVParser.parse(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+                List<CSVRecord> batch = new ArrayList<>(batchSize);
+                for (CSVRecord record : parser) {
+                    checkInterrupted();
+                    batch.add(record);
+                    if (batch.size() == batchSize) {
+                        long[] counts = processBatch(batch, query, processed, total);
+                        processed += batch.size(); inserted += counts[0]; updated += counts[1]; skipped += counts[2];
                         batch.clear();
                     }
                 }
-
                 if (!batch.isEmpty()) {
-                    Duration[] times = processBatch(batch, results, query, processed, totalLines);
-                    totalFindAll = totalFindAll.plus(times[0]);
-                    totalSaveAll = totalSaveAll.plus(times[1]);
-                    totalSaveQuery = totalSaveQuery.plus(times[2]);
+                    long[] counts = processBatch(batch, query, processed, total);
+                    processed += batch.size(); inserted += counts[0]; updated += counts[1]; skipped += counts[2];
                 }
             }
-
-            log.info("[TIMER] SUMA czasów findAllByCodIdIn: {} ms", totalFindAll.toMillis());
-            log.info("[TIMER] SUMA czasów saveAll: {} ms", totalSaveAll.toMillis());
-            log.info("[TIMER] SUMA czasów save(query): {} ms", totalSaveQuery.toMillis());
-            log.info("[TIMER] Łączny czas importu: {} sekund", Duration.between(startAll, Instant.now()).toSeconds());
-
-        } catch (Exception e) {
-            log.error("Błąd podczas importu: ", e); // w takie sytuacji trzeba w przyszlosci dorobić kasowanie rekordu w
-                                                    // entry -TODO TO DO
+            log.info("COD import {}: processed={}, inserted={}, updated={}, skipped={}",
+                    query.getId(), processed, inserted, updated, skipped);
         } finally {
-            if (tempFile != null) {
-                try {
-                    Files.deleteIfExists(tempFile);
-                    log.info("Usunięto plik tymczasowy: {}", tempFile);
-                } catch (IOException e) {
-                    log.warn("Nie udało się usunąć pliku tymczasowego: {}", tempFile);
-                }
-            }
+            Files.deleteIfExists(csv);
         }
-
-        return results;
     }
 
-    @Transactional
-    private Duration[] processBatch(List<CSVRecord> batch, List<CodImportResult> results,
-            CodQuery query, int processedSoFar, int totalLines) {
-
-        List<String> codIds = batch.stream().map(r -> r.get("file")).toList();
-
-        Instant start = Instant.now();
-        Map<String, CodEntry> existing = codEntryRepository.findAllByCodIdIn(codIds)
-                .stream().collect(Collectors.toMap(CodEntry::getCodId, e -> e));
-        Duration findDuration = Duration.between(start, Instant.now());
-
-        List<CodEntry> toSave = new ArrayList<>();
-        for (CSVRecord record : batch) {
+    private long[] processBatch(List<CSVRecord> batch, CodQuery query, long processed, long total) {
+        return batchTransaction.execute(status -> {
             try {
-                String codId = record.get("file");
-                String mineral = record.isMapped("mineral") ? record.get("mineral") : "";
-                CodEntry entry = existing.getOrDefault(codId, new CodEntry());
-
-                entry.setCodId(codId);
-                entry.setMineralName(mineral);
-                entry.setFormula(record.get("formula"));
-                entry.setElements(record.get("compoundsource"));
-                entry.setPublicationYear(record.get("year"));
-                entry.setAuthors(record.get("authors"));
-                entry.setJournal(record.get("journal"));
-                entry.setDoi(record.get("doi"));
-                entry.setDownloadUrl("https://www.crystallography.net/cod/" + codId + ".cif");
-                entry.setLastUpdated(LocalDateTime.now());
-
-                toSave.add(entry);
-                results.add(new CodImportResult(codId, mineral));
-            } catch (Exception e) {
-                log.warn("Błąd parsowania rekordu", e);
+                List<String> ids = batch.stream().map(r -> r.get("file")).toList();
+                Map<String, CodEntry> existing = entries.findAllByCodIdIn(ids).stream()
+                        .collect(Collectors.toMap(CodEntry::getCodId, e -> e));
+                List<CodEntry> toSave = new ArrayList<>(batch.size());
+                long inserted = 0, updated = 0, skipped = 0;
+                for (CSVRecord record : batch) {
+                    checkInterrupted();
+                    // Malformed CSV rows were historically skipped; preserve that behavior.
+                    if (!record.isConsistent()) { skipped++; continue; }
+                    String id = record.get("file");
+                    CodEntry entry = existing.get(id);
+                    if (entry == null) { entry = new CodEntry(); inserted++; }
+                    else updated++;
+                    entry.setCodId(id);
+                    entry.setMineralName(record.isMapped("mineral") ? record.get("mineral") : "");
+                    entry.setFormula(record.get("formula"));
+                    entry.setElements(record.get("compoundsource"));
+                    entry.setPublicationYear(record.get("year"));
+                    entry.setAuthors(record.get("authors"));
+                    entry.setJournal(record.get("journal"));
+                    entry.setDoi(record.get("doi"));
+                    entry.setDownloadUrl("https://www.crystallography.net/cod/" + id + ".cif");
+                    entry.setLastUpdated(LocalDateTime.now());
+                    toSave.add(entry);
+                }
+                entries.saveAll(toSave);
+                query.setProgress((int) Math.min(99, (processed + batch.size()) * 100 / total));
+                queries.save(query);
+                entityManager.flush();
+                return new long[]{inserted, updated, skipped};
+            } finally {
+                // Only this batch's transactional persistence context is cleared.
+                entityManager.clear();
             }
+        });
+    }
+
+    private static void checkInterrupted() {
+        if (Thread.currentThread().isInterrupted()) throw new CancellationException("COD import interrupted");
+    }
+
+    @PreDestroy
+    public void close() {
+        synchronized (this) {
+            if (stopping) return;
+            stopping = true;
+            for (ImportJob job : List.copyOf(admitted.values())) finish(job, CodQueryStatus.FAILED);
+            executor.shutdownNow();
+            statusRecovery.shutdownNow();
         }
-
-        Instant saveStart = Instant.now();
-        codEntryRepository.saveAll(toSave);
-        Duration saveAllDuration = Duration.between(saveStart, Instant.now());
-
-        int progress = (int) (((double) (processedSoFar + batch.size()) / totalLines) * 100);
-        query.setProgress(progress);
-        Instant saveQueryStart = Instant.now();
-        codQueryRepository.save(query);
-        Duration saveQueryDuration = Duration.between(saveQueryStart, Instant.now());
-
-        return new Duration[] { findDuration, saveAllDuration, saveQueryDuration };
+        // Release admission lock before awaiting the worker's terminal status write.
+        try { executor.awaitTermination(30, TimeUnit.SECONDS); }
+        catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); }
     }
 }

@@ -23,6 +23,10 @@ public class CodQuery {
     @Column(name = "completed", nullable = false)
     private boolean completed;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 16)
+    private CodQueryStatus status = CodQueryStatus.PENDING;
+
     @Column(name = "progress", nullable = false)
     private int progress = 0;
 
@@ -33,6 +37,7 @@ public class CodQuery {
         this.elementSet = elementSet;
         this.requestedAt = requestedAt;
         this.completed = completed;
+        this.status = completed ? CodQueryStatus.COMPLETED : CodQueryStatus.PENDING;
     }
 
     public Long getId() {
@@ -65,6 +70,16 @@ public class CodQuery {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+        this.status = completed ? CodQueryStatus.COMPLETED : CodQueryStatus.PENDING;
+    }
+
+    public CodQueryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CodQueryStatus status) {
+        this.status = status;
+        this.completed = status == CodQueryStatus.COMPLETED;
     }
 
     public int getProgress() {

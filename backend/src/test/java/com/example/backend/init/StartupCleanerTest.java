@@ -10,12 +10,21 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(OutputCaptureExtension.class)
 class StartupCleanerTest {
     private final StartupCleaner cleaner = new StartupCleaner(
             mock(CodQueryRepository.class), mock(DataSource.class));
+
+    @Test
+    void interruptedImportsAreMarkedFailedInsteadOfDeleted(CapturedOutput output) {
+        CodQueryRepository repository = mock(CodQueryRepository.class);
+        when(repository.failInterruptedQueries()).thenReturn(2);
+        new StartupCleaner(repository, mock(DataSource.class)).onStartup();
+        verify(repository).failInterruptedQueries();
+        assertThat(output).contains("FAILED 2 przerwanych importów COD");
+    }
 
     @Test
     void diagnosticsReportPresenceWithoutPrintingValues(CapturedOutput output) {
