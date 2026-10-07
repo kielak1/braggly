@@ -21,6 +21,10 @@ final class ChemicalComposition {
 
     private ChemicalComposition() {}
 
+    static boolean isElementSymbol(String symbol) {
+        return ELEMENTS.contains(symbol);
+    }
+
     static Optional<Map<String, BigDecimal>> parse(String formula) {
         if (formula == null || formula.length() > 257) return Optional.empty();
         String text = formula.strip();

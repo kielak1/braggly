@@ -1,0 +1,14 @@
+# Reduced atom-site regression fixture from COD 7209481; scientific data only.
+# Source: https://www.crystallography.net/cod/7209481.cif
+data_cod_7209481
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+O2 O-2 0.3334 0.129 0.0299
+B1 B+3 0.208 0.2527 0.1092
+O1 O-2 0.0693 0.1103 0.1698
+Bi1 Bi+3 -0.25713 0.23409 0.12288
+O3 O-2 0.2439 0.5214 0.143

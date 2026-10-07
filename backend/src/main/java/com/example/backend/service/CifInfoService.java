@@ -1,7 +1,11 @@
 package com.example.backend.service;
 
 import org.rcsb.cif.CifIO;
+import org.rcsb.cif.EmptyColumnException;
+import org.rcsb.cif.ParsingException;
 import org.rcsb.cif.model.Block;
+import org.rcsb.cif.model.Column;
+import org.rcsb.cif.model.ValueKind;
 import org.rcsb.cif.model.CifFile;
 import org.rcsb.cif.model.Category;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 @Service
 public class CifInfoService {
@@ -91,6 +97,7 @@ public class CifInfoService {
         Map<String, Object> result = new LinkedHashMap<>();
         try (InputStream closableStream = new LimitedInputStream(stream, limits.maxFileBytes())) {
             CifFile cifFile = CifIO.readFromInputStream(closableStream);
+            if (cifFile.getBlocks().isEmpty()) throw CifAtomTypeResolver.unsupported();
             long totalAtoms = cifFile.getBlocks().stream()
                     .mapToLong(b -> b.getCategory("atom_site_label").getRowCount()).sum();
             if (totalAtoms > limits.maxAtoms()) {
@@ -118,6 +125,8 @@ public class CifInfoService {
 
         } catch (LimitedInputStream.SizeLimitExceededException tooLarge) {
             throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "CIF size limit exceeded");
+        } catch (EmptyColumnException | ParsingException unsupported) {
+            throw CifAtomTypeResolver.unsupported();
         } catch (UncheckedIOException failure) {
             // BufferedReader.lines() in ciftools wraps read failures after its initial probe.
             if (failure.getCause() instanceof LimitedInputStream.SizeLimitExceededException) {
@@ -164,43 +173,56 @@ public class CifInfoService {
     private List<Map<String, String>> parseAtoms(Block block) {
         List<Map<String, String>> atoms = new ArrayList<>();
 
-        var labelsCategory = block.getCategory("atom_site_label");
-        var typesCategory = block.getCategory("atom_site_type_symbol");
-        var xCategory = block.getCategory("atom_site_fract_x");
-        var yCategory = block.getCategory("atom_site_fract_y");
-        var zCategory = block.getCategory("atom_site_fract_z");
-
-        if (labelsCategory == null || typesCategory == null || xCategory == null || yCategory == null
-                || zCategory == null) {
-            System.out.println("[DEBUG] Brakuje jednej z wymaganych kategorii.");
-            return atoms;
-        }
-
-        var labels = labelsCategory.getColumn("");
-        var types = typesCategory.getColumn("");
-        var fractX = xCategory.getColumn("");
-        var fractY = yCategory.getColumn("");
-        var fractZ = zCategory.getColumn("");
+        var labels = block.getCategory("atom_site_label").getColumn("");
+        var types = block.getCategory("atom_site_type_symbol").getColumn("");
+        var component0 = block.getCategory("atom_site_label_component_0").getColumn("");
+        var fractX = block.getCategory("atom_site_fract_x").getColumn("");
+        var fractY = block.getCategory("atom_site_fract_y").getColumn("");
+        var fractZ = block.getCategory("atom_site_fract_z").getColumn("");
 
         int rowCount = labels.getRowCount();
+        if (rowCount == 0 || fractX.getRowCount() != rowCount || fractY.getRowCount() != rowCount
+                || fractZ.getRowCount() != rowCount
+                || (types.isDefined() && types.getRowCount() != rowCount)
+                || (component0.isDefined() && component0.getRowCount() != rowCount)) {
+            throw CifAtomTypeResolver.unsupported();
+        }
         if (rowCount > limits.maxAtoms()) {
             throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "CIF atom limit exceeded");
         }
-        System.out.println("[DEBUG] atomCount: " + rowCount);
+        var typeDictionary = block.getCategory("atom_type_symbol").getColumn("");
+        Set<String> declaredTypes = new HashSet<>();
+        for (int i = 0; i < typeDictionary.getRowCount(); i++) {
+            String code = optionalValue(typeDictionary, i);
+            if (code != null) declaredTypes.add(code);
+        }
 
         for (int i = 0; i < rowCount; i++) {
             Map<String, String> atom = new LinkedHashMap<>();
-            atom.put("label", labels.getStringData(i).trim());
-            atom.put("element", types.getStringData(i).trim());
-            atom.put("x", fractX.getStringData(i).trim());
-            atom.put("y", fractY.getStringData(i).trim());
-            atom.put("z", fractZ.getStringData(i).trim());
+            String label = requiredValue(labels, i);
+            atom.put("label", label);
+            atom.put("element", CifAtomTypeResolver.resolve(optionalValue(types, i),
+                    optionalValue(component0, i), label, declaredTypes));
+            atom.put("x", requiredValue(fractX, i));
+            atom.put("y", requiredValue(fractY, i));
+            atom.put("z", requiredValue(fractZ, i));
 
       //      System.out.println("[DEBUG] Atom #" + i + ": " + atom);
             atoms.add(atom);
         }
 
         return atoms;
+    }
+
+    private String optionalValue(Column<?> column, int row) {
+        if (!column.isDefined() || column.getValueKind(row) != ValueKind.PRESENT) return null;
+        return column.getStringData(row).trim();
+    }
+
+    private String requiredValue(Column<?> column, int row) {
+        String value = optionalValue(column, row);
+        if (value == null || value.isBlank()) throw CifAtomTypeResolver.unsupported();
+        return value;
     }
 
 }

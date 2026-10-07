@@ -1,6 +1,10 @@
 package com.example.backend.service;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.rcsb.cif.CifIO;
+import org.rcsb.cif.EmptyColumnException;
 import org.springframework.web.server.ResponseStatusException;
 import java.io.*;
 import java.net.URLConnection;
@@ -40,6 +44,55 @@ class CifInfoServiceTest {
         assertThatThrownBy(() -> service(storage,100,100,2).getStructureInfo("123"))
                 .isInstanceOfSatisfying(ResponseStatusException.class,e -> assertThat(e.getStatusCode().value()).isEqualTo(413));
         assertThat(input.closed).isTrue();
+    }
+    @Test void unsupportedAtomColumnsReturn422CloseStreamAndReleasePermit() throws Exception {
+        var storage=mock(CloudStorageService.class);
+        byte[] missingType=("data_synthetic\nloop_\n_atom_site_label\n_atom_site_fract_x\n"
+                + "_atom_site_fract_y\n_atom_site_fract_z\nUnknown1 0.1 0.2 0.3\n").getBytes(StandardCharsets.UTF_8);
+        var input=new TrackingStream(missingType);
+        when(storage.downloadFile(anyString())).thenReturn(input,new TrackingStream(cif(1)));
+        var service=service(storage,4096,100,1);
+        assertThatThrownBy(() -> service.getStructureInfo("123"))
+                .isInstanceOfSatisfying(ResponseStatusException.class,e -> {
+                    assertThat(e.getStatusCode().value()).isEqualTo(422);
+                    assertThat(e.getReason()).isEqualTo("CIF atom data is not supported");
+                });
+        assertThat(input.closed).isTrue();
+        assertThat((List<?>)service.getStructureInfo("456").get("atoms")).hasSize(1);
+        verify(storage,never()).uploadFile(anyString(),any(Path.class));
+    }
+    @Test void libraryEmptyColumnExceptionReturns422AndClosesStreamWithoutLeakingPermit() throws Exception {
+        var storage=mock(CloudStorageService.class);var input=new TrackingStream(cif(1));
+        when(storage.downloadFile(anyString())).thenReturn(input,new TrackingStream(cif(1)));
+        var service=service(storage,4096,100,1);
+        try(var library=mockStatic(CifIO.class)) {
+            library.when(() -> CifIO.readFromInputStream(any(InputStream.class)))
+                    .thenThrow(new EmptyColumnException("synthetic missing column"));
+            assertThatThrownBy(() -> service.getStructureInfo("123"))
+                    .isInstanceOfSatisfying(ResponseStatusException.class,e -> assertThat(e.getStatusCode().value()).isEqualTo(422));
+        }
+        assertThat(input.closed).isTrue();
+        assertThat((List<?>)service.getStructureInfo("456").get("atoms")).hasSize(1);
+    }
+    @ParameterizedTest
+    @ValueSource(strings={"data_synthetic\nloop_\n_atom_site_label\n_atom_site_fract_x\nC1\n", "", "not a CIF"})
+    void malformedCifReturns422AndReleasesResources(String text) throws Exception {
+        var storage=mock(CloudStorageService.class);var input=new TrackingStream(text.getBytes(StandardCharsets.UTF_8));
+        when(storage.downloadFile(anyString())).thenReturn(input,new TrackingStream(cif(1)));
+        var service=service(storage,4096,100,1);
+        assertThatThrownBy(() -> service.getStructureInfo("123"))
+                .isInstanceOfSatisfying(ResponseStatusException.class,e -> assertThat(e.getStatusCode().value()).isEqualTo(422));
+        assertThat(input.closed).isTrue();
+        assertThat((List<?>)service.getStructureInfo("456").get("atoms")).hasSize(1);
+    }
+    @Test void missingCoordinatesAre422InsteadOfEmptyOrPartialAtoms() throws Exception {
+        var storage=mock(CloudStorageService.class);
+        byte[] missing=cif(1);
+        missing=new String(missing,StandardCharsets.UTF_8).replace("_atom_site_fract_z\n","")
+                .replace("H0 H 0.1 0.2 0.3", "H0 H 0.1 0.2").getBytes(StandardCharsets.UTF_8);
+        when(storage.downloadFile(anyString())).thenReturn(new TrackingStream(missing));
+        assertThatThrownBy(() -> service(storage,4096,100,1).getStructureInfo("123"))
+                .isInstanceOfSatisfying(ResponseStatusException.class,e -> assertThat(e.getStatusCode().value()).isEqualTo(422));
     }
     @Test void rejectsTooManyAtomsBeforeBuildingResponseAndClosesStream() throws Exception {
         var storage=mock(CloudStorageService.class);var input=new TrackingStream(cif(3));
