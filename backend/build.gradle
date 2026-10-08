@@ -4,6 +4,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
+// Keep the embedded Tomcat family aligned for the security patch.
+ext['tomcat.version'] = '10.1.60'
+
 group = 'com.example'
 version = '1.0.0-' + (System.getenv("GIT_COMMIT") ?: 'SNAPSHOT')
 
